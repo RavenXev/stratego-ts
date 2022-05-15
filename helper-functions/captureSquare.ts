@@ -5,11 +5,35 @@ function captureSquare(
   position2: Piece["position"],
   board: Piece[]
 ): Piece[] {
-  board[position2].rank = board[position1].rank;
-  board[position2].color = board[position1].color;
+  const attacker = board[position1];
+  const opponent = board[position2];
 
-  board[position1].rank = null;
-  board[position1].color = undefined;
+  if (
+    opponent.rank === null ||
+    (attacker.rank === 1 && opponent.rank === 10) ||
+    (attacker.rank === 3 && opponent.rank === 99)
+  ) {
+    opponent.rank = attacker.rank;
+    opponent.color = attacker.color;
+
+    attacker.rank = null;
+    attacker.color = undefined;
+  } else if (attacker.rank === opponent.rank) {
+    attacker.rank = null;
+    attacker.color = undefined;
+
+    opponent.rank = null;
+    opponent.color = undefined;
+  } else if (attacker.rank != null && attacker.rank > opponent.rank) {
+    opponent.rank = attacker.rank;
+    opponent.color = attacker.color;
+
+    attacker.rank = null;
+    attacker.color = undefined;
+  } else {
+    attacker.rank = null;
+    attacker.color = undefined;
+  }
 
   return board;
 }
