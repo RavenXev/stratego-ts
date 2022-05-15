@@ -1,6 +1,12 @@
 import Piece from "./Piece";
 
-const Square: React.FC<Piece> = ({ rank, color, highlighted, handleClick }) => {
+interface SquareProps {
+  piece: Piece;
+  handleClick?: () => void;
+}
+
+const Square: React.FC<SquareProps> = ({ piece, handleClick }) => {
+  const { rank, color, highlighted } = piece;
   let newColor: Piece["color"] = color;
   if (highlighted == true) {
     newColor = "yellow";
