@@ -1,4 +1,4 @@
-import Piece from "./Piece";
+import Piece from "../helper-functions/Piece";
 
 interface SquareProps {
   piece: Piece;

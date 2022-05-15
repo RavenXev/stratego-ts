@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "helper-functions/Square.tsx"],
+  "include": ["src", "../components/Square.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
