@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
 import { set, ref, push } from "firebase/database";
+import createDummyGame from "../helper-functions/createDummyGame";
 
 interface HomeProps {
   userId: string | undefined;
@@ -9,13 +10,21 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ userId }) => {
   const navigate = useNavigate();
-
+  const allGamesRef = ref(database, "games");
+  const newGameRef = push(allGamesRef);
+  const dummyGame = createDummyGame();
   const createGame = () => {
-    const allGamesRef = ref(database, "games");
-    const gameRef = ref(database, "games/" + userId);
-    set(gameRef, {
-      id: userId,
-      name: "hello",
+    set(newGameRef, {
+      hostId: userId,
+      opponent: null,
+      whoseTurn: "red",
+      gameState: dummyGame,
+      activeSquare: {
+        rank: null,
+        position: -1,
+        color: "transparent",
+        highlighted: false,
+      },
     });
   };
 
@@ -24,8 +33,7 @@ const Home: React.FC<HomeProps> = ({ userId }) => {
       <button
         onClick={() => {
           createGame();
-          console.log("hello again!");
-          navigate("/game");
+          navigate(`/games/${newGameRef.key}`);
         }}
       >
         {" "}

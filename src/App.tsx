@@ -25,7 +25,6 @@ const App: React.FC = () => {
         id: user.uid,
         name: "hello",
       });
-      console.log(user?.uid);
     } else {
       // User is signed out
     }
@@ -50,7 +49,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Home userId={user?.uid} />} />
-          <Route path="/game" element={<Game />} />
+          <Route path="/games/:id" element={<Game />} />
         </Routes>
       </Router>
     </>

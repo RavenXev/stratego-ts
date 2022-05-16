@@ -7,7 +7,7 @@ function createDummyGame() {
     const newSquare: Piece = {
       rank: 0,
       position: 0,
-      color: undefined,
+      color: "transparent",
       highlighted: false,
     };
     newSquare.position = i;
@@ -16,10 +16,10 @@ function createDummyGame() {
       newSquare.color = "blue";
     } else if ([42, 43, 52, 53, 46, 47, 56, 57].includes(i)) {
       newSquare.rank = -1;
-      newSquare.color = undefined;
+      newSquare.color = "transparent";
     } else if (i <= 59) {
       newSquare.rank = null;
-      newSquare.color = undefined;
+      newSquare.color = "transparent";
     } else {
       newSquare.rank = ranks[Math.floor(Math.random() * ranks.length)];
       newSquare.color = "red";
