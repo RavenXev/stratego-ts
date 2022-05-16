@@ -69,7 +69,6 @@ const Game: React.FC = () => {
           );
         })}
       </div>
-      <button id="createGameButton">Create Game</button>
     </>
   );
 };
