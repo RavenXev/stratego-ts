@@ -13,7 +13,6 @@ function getAvailableMoves(
   gameState: Piece[]
 ) {
   // if the rank is 0 (flag) or 99 (bomb), return an empty array.
-
   let anticolor: Piece["color"];
   if (color === "red") {
     anticolor = "blue";
@@ -36,13 +35,13 @@ function getAvailableMoves(
   } else if (position % 10 === 0) {
     validMoves = [position + 1, position + 10, position - 10];
   }
-
   validMoves = validMoves.filter((position) => position >= 0 && position <= 99);
   validMoves = validMoves.filter(
     (currentPosition) =>
-      gameState[currentPosition].rank === null ||
+      gameState[currentPosition].rank == null ||
       gameState[currentPosition].color == anticolor
   );
+
   return validMoves;
 }
 

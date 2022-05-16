@@ -42,7 +42,7 @@ const Game: React.FC = () => {
     const { rank, position, color, highlighted } = piece;
 
     if (!game) return;
-    let newGame = { ...game };
+    let newGame: GameProps = { ...game };
     newGame.activeSquare = newGame.gameState[position];
 
     if (highlighted === true) {
@@ -54,7 +54,6 @@ const Game: React.FC = () => {
       for (let i = 0; i < 100; i++) {
         newGame.gameState[i].highlighted = false;
       }
-
       newGame.whoseTurn = newGame.whoseTurn === "red" ? "blue" : "red";
     } else {
       // if player did not click on highlighted piece
@@ -65,6 +64,7 @@ const Game: React.FC = () => {
       if (color !== newGame.whoseTurn) {
         return;
       }
+
       const availableMoves = getAvailableMoves(
         rank,
         position,

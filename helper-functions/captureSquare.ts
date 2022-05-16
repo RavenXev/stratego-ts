@@ -9,7 +9,7 @@ function captureSquare(
   const opponent = board[position2];
 
   if (
-    opponent.rank === null ||
+    opponent.rank == null ||
     (attacker.rank === 1 && opponent.rank === 10) ||
     (attacker.rank === 3 && opponent.rank === 99)
   ) {
@@ -17,22 +17,22 @@ function captureSquare(
     opponent.color = attacker.color;
 
     attacker.rank = null;
-    attacker.color = undefined;
+    attacker.color = "transparent";
   } else if (attacker.rank === opponent.rank) {
     attacker.rank = null;
-    attacker.color = undefined;
+    attacker.color = "transparent";
 
     opponent.rank = null;
-    opponent.color = undefined;
+    opponent.color = "transparent";
   } else if (attacker.rank != null && attacker.rank > opponent.rank) {
     opponent.rank = attacker.rank;
     opponent.color = attacker.color;
 
     attacker.rank = null;
-    attacker.color = undefined;
+    attacker.color = "transparent";
   } else {
     attacker.rank = null;
-    attacker.color = undefined;
+    attacker.color = "transparent";
   }
 
   return board;
