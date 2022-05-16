@@ -2,80 +2,88 @@ import React, { useEffect, useState } from "react";
 import "./Game.css";
 import Piece from "../helper-functions/Piece";
 import Square from "../components/Square";
-import createDummyGame from "../helper-functions/createDummyGame";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
-import { useObjectVal } from "react-firebase-hooks/database";
 import { database } from "../backend/config";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, off, set } from "firebase/database";
 
-let dummyGame = createDummyGame();
+interface GameProps {
+  hostId: string;
+  opponent: string;
+  gameState: Piece[];
+  whoseTurn: string;
+  activeSquare: { color: string; highlighted: boolean; position: number };
+}
 
 const Game: React.FC = () => {
-  const [gameState, setGameState] = useState<Piece[]>(dummyGame);
-  const [whoseTurn, setWhoseTurn] = useState<Piece["color"]>("red");
-  const [activeSquare, setActiveSquare] = useState<Piece>({
-    rank: null,
-    position: -1,
-    color: "transparent",
-    highlighted: false,
-  });
+  // const [gameState, setGameState] = useState<Piece[]>(dummyGame);
+  // const [whoseTurn, setWhoseTurn] = useState<Piece["color"]>("red");
+  // const [activeSquare, setActiveSquare] = useState<Piece>({
+  //   rank: null,
+  //   position: -1,
+  //   color: "transparent",
+  //   highlighted: false,
+  // });
 
+  const [game, setGame] = useState<GameProps | null>(null);
   const { id } = useParams();
-
-  // useEffect(() => {
-  //   const reference = ref(database, `games/${id}`);
-
-  //   onValue(reference, (snapshot) => {
-  //     console.log(snapshot);
-  //   });
-  // }, [id]);
   const reference = ref(database, `games/${id}`);
-  const [value, loading, error] = useObjectVal(reference);
+
+  useEffect(() => {
+    onValue(reference, (snapshot) => {
+      setGame(snapshot.val());
+    });
+
+    return () => off(reference);
+  }, []);
 
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
-    let newGameState = [...gameState];
-    setActiveSquare(newGameState[position]);
+
+    if (!game) return;
+    let newGame = { ...game };
+    newGame.activeSquare = newGame.gameState[position];
 
     if (highlighted === true) {
-      newGameState = captureSquare(
-        activeSquare["position"],
+      newGame.gameState = captureSquare(
+        game.activeSquare["position"],
         position,
-        gameState
+        game.gameState
       );
-      for (let i = 0; i < newGameState.length; i++) {
-        newGameState[i].highlighted = false;
-      }
-      setWhoseTurn(whoseTurn == "red" ? "blue" : "red");
-    } else {
-      for (let i = 0; i < newGameState.length; i++) {
-        newGameState[i].highlighted = false;
+      for (let i = 0; i < 100; i++) {
+        newGame.gameState[i].highlighted = false;
       }
 
-      if (color !== whoseTurn) {
+      newGame.whoseTurn = newGame.whoseTurn === "red" ? "blue" : "red";
+    } else {
+      // if player did not click on highlighted piece
+      for (let i = 0; i < 100; i++) {
+        newGame.gameState[i].highlighted = false;
+      }
+
+      if (color !== newGame.whoseTurn) {
         return;
       }
-
       const availableMoves = getAvailableMoves(
         rank,
         position,
         color,
-        gameState
+        newGame.gameState
       );
       for (const i of availableMoves) {
-        newGameState[i].highlighted = true;
+        newGame.gameState[i].highlighted = true;
       }
     }
 
-    setGameState(newGameState);
+    set(reference, newGame);
   };
 
+  if (!game) return <> nope </>;
   return (
     <>
       <div className="Game">
-        {gameState.map((piece: Piece) => {
+        {game.gameState.map((piece: Piece) => {
           return (
             <Square
               key={piece.position}
