@@ -6,7 +6,8 @@ import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, onValue, off, set } from "firebase/database";
+import { ref, set } from "firebase/database";
+import { useObjectVal } from "react-firebase-hooks/database";
 
 interface GameProps {
   hostId: string;
@@ -26,17 +27,9 @@ const Game: React.FC = () => {
   //   highlighted: false,
   // });
 
-  const [game, setGame] = useState<GameProps | null>(null);
   const { id } = useParams();
   const reference = ref(database, `games/${id}`);
-
-  useEffect(() => {
-    onValue(reference, (snapshot) => {
-      setGame(snapshot.val());
-    });
-
-    return () => off(reference);
-  }, []);
+  const [game, loading, error] = useObjectVal<GameProps>(reference);
 
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
