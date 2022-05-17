@@ -18,15 +18,6 @@ interface GameProps {
 }
 
 const Game: React.FC = () => {
-  // const [gameState, setGameState] = useState<Piece[]>(dummyGame);
-  // const [whoseTurn, setWhoseTurn] = useState<Piece["color"]>("red");
-  // const [activeSquare, setActiveSquare] = useState<Piece>({
-  //   rank: null,
-  //   position: -1,
-  //   color: "transparent",
-  //   highlighted: false,
-  // });
-
   const { id } = useParams();
   const reference = ref(database, `games/${id}`);
   const [game, loading, error] = useObjectVal<GameProps>(reference);
@@ -34,7 +25,7 @@ const Game: React.FC = () => {
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
 
-    if (!game) return;
+    if (!game) return null;
     let newGame: GameProps = { ...game };
     newGame.activeSquare = newGame.gameState[position];
 

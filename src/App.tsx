@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { auth, database } from "../backend/config";
 import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -15,34 +15,22 @@ import Game from "./Game";
 import Home from "./Home";
 
 const App: React.FC = () => {
-  const [user] = useAuthState(auth);
-  let userRef: DatabaseReference;
+  const [user, loading, error] = useAuthState(auth);
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userRef = ref(database, "users/" + user.uid);
-      set(userRef, {
-        id: user.uid,
-        name: "hello",
+  useEffect(() => {
+    if (!user) {
+      signInAnonymously(auth).catch((error) => {
+        console.log(error);
       });
-    } else {
-      // User is signed out
     }
-    // onValue(allUsersRef, (snapshot) => {
-    //   const data = snapshot.val();
-    // });
-
-    // onChildAdded(allGamesRef, (snapshot) => {
-    //   const addedGame = snapshot.val();
-    // });
-    onDisconnect(userRef).remove();
-  });
-
-  signInAnonymously(auth).catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ...
-  });
+  }, [user]);
+  console.log(user);
+  if (user) {
+    const userRef = ref(database, `/users/${user.uid}`);
+    set(userRef, {
+      id: user.uid,
+    });
+  }
 
   return (
     <>
