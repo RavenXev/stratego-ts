@@ -23,12 +23,13 @@ const App: React.FC = () => {
   }, [user]);
 
   console.log(user);
+  if (!user) return <div>loading user...</div>;
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/games/:id" element={<Game />} />
+          <Route path="/" element={<Home userId={user.uid} />} />
+          <Route path="/games/:id" element={<Game userId={user.uid} />} />
         </Routes>
       </Router>
     </>

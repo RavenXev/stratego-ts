@@ -4,7 +4,11 @@ import { database } from "../backend/config";
 import { set, ref, push } from "firebase/database";
 import createDummyGame from "../helper-functions/createDummyGame";
 
-const Home: React.FC = () => {
+interface userIdProp {
+  userId: string;
+}
+
+const Home: React.FC<userIdProp> = ({ userId }) => {
   const navigate = useNavigate();
   const allGamesRef = ref(database, "games");
   const newGameRef = push(allGamesRef);

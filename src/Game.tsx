@@ -21,7 +21,11 @@ interface localGameProps {
   activeSquare: Piece;
 }
 
-const Game: React.FC = () => {
+interface userIdProp {
+  userId: string;
+}
+
+const Game: React.FC<userIdProp> = ({ userId }) => {
   const { id: gameId } = useParams();
   const reference = ref(database, `games/${gameId}`);
 
@@ -46,26 +50,26 @@ const Game: React.FC = () => {
     const { rank, position, color, highlighted } = piece;
 
     if (!localGame || !dbGame) return null;
-    let newGame: dbGameProps = { ...dbGame };
+    let dbGameCopy: dbGameProps = { ...dbGame };
 
     if (highlighted === true) {
-      newGame.gameState = captureSquare(
+      dbGameCopy.gameState = captureSquare(
         localGame.activeSquare["position"],
         position,
         dbGame.gameState
       );
       for (let i = 0; i < 100; i++) {
-        newGame.gameState[i].highlighted = false;
+        dbGameCopy.gameState[i].highlighted = false;
       }
-      newGame.whoseTurn = newGame.whoseTurn === "red" ? "blue" : "red";
-      set(reference, newGame);
+      dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
+      set(reference, dbGameCopy);
     } else {
-      // if player did not click on highlighted piece
+      // player did not click on highlighted piece
       for (let i = 0; i < 100; i++) {
-        newGame.gameState[i].highlighted = false;
+        dbGameCopy.gameState[i].highlighted = false;
       }
 
-      if (color !== newGame.whoseTurn) {
+      if (color !== dbGameCopy.whoseTurn) {
         return;
       }
 
@@ -73,15 +77,15 @@ const Game: React.FC = () => {
         rank,
         position,
         color,
-        newGame.gameState
+        dbGameCopy.gameState
       );
       for (const i of availableMoves) {
-        newGame.gameState[i].highlighted = true;
+        dbGameCopy.gameState[i].highlighted = true;
       }
 
       setLocalGame({
-        gameState: newGame.gameState,
-        activeSquare: newGame.gameState[position],
+        gameState: dbGameCopy.gameState,
+        activeSquare: dbGameCopy.gameState[position],
       });
     }
   };
