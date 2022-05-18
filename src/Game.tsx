@@ -5,9 +5,11 @@ import Square from "../components/Square";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
-import { database } from "../backend/config";
+import { auth, database } from "../backend/config";
 import { ref, set } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { signInAnonymously } from "firebase/auth";
 
 interface GameProps {
   hostId: string;
@@ -20,7 +22,8 @@ interface GameProps {
 const Game: React.FC = () => {
   const { id } = useParams();
   const reference = ref(database, `games/${id}`);
-  const [game, loading, error] = useObjectVal<GameProps>(reference);
+
+  const [game, gameLoading, gameError] = useObjectVal<GameProps>(reference);
 
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
@@ -63,7 +66,7 @@ const Game: React.FC = () => {
     set(reference, newGame);
   };
 
-  if (!game) return <> nope </>;
+  if (gameLoading || !game) return <> nope </>;
   return (
     <>
       <div className="Game">
