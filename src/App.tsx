@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { auth, database } from "../backend/config";
-import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { signInAnonymously } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, set, onDisconnect } from "firebase/database";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Game from "./Game";
 import Home from "./Home";
 

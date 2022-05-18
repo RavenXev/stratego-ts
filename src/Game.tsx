@@ -5,11 +5,9 @@ import Square from "../components/Square";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
-import { auth, database } from "../backend/config";
+import { database } from "../backend/config";
 import { ref, set } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { signInAnonymously } from "firebase/auth";
 
 interface GameProps {
   hostId: string;

@@ -1,10 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, database } from "../backend/config";
+import { database } from "../backend/config";
 import { set, ref, push } from "firebase/database";
 import createDummyGame from "../helper-functions/createDummyGame";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { signInAnonymously } from "firebase/auth";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
