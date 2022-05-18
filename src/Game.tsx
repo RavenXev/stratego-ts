@@ -9,37 +9,56 @@ import { database } from "../backend/config";
 import { ref, set } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 
-interface GameProps {
+interface dbGameProps {
   hostId: string;
   opponent: string;
   gameState: Piece[];
   whoseTurn: string;
-  activeSquare: { color: string; highlighted: boolean; position: number };
+}
+
+interface localGameProps {
+  gameState: Piece[];
+  activeSquare: Piece;
 }
 
 const Game: React.FC = () => {
-  const { id } = useParams();
-  const reference = ref(database, `games/${id}`);
+  const { id: gameId } = useParams();
+  const reference = ref(database, `games/${gameId}`);
 
-  const [game, gameLoading, gameError] = useObjectVal<GameProps>(reference);
+  const [dbGame, dbGameLoading, dbGameError] =
+    useObjectVal<dbGameProps>(reference);
+  const [localGame, setLocalGame] = useState<localGameProps>();
 
+  useEffect(() => {
+    if (dbGame != null) {
+      setLocalGame({
+        gameState: dbGame.gameState,
+        activeSquare: {
+          rank: null,
+          position: -1,
+          color: "transparent",
+          highlighted: false,
+        },
+      });
+    }
+  }, [dbGame]);
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
 
-    if (!game) return null;
-    let newGame: GameProps = { ...game };
-    newGame.activeSquare = newGame.gameState[position];
+    if (!localGame || !dbGame) return null;
+    let newGame: dbGameProps = { ...dbGame };
 
     if (highlighted === true) {
       newGame.gameState = captureSquare(
-        game.activeSquare["position"],
+        localGame.activeSquare["position"],
         position,
-        game.gameState
+        dbGame.gameState
       );
       for (let i = 0; i < 100; i++) {
         newGame.gameState[i].highlighted = false;
       }
       newGame.whoseTurn = newGame.whoseTurn === "red" ? "blue" : "red";
+      set(reference, newGame);
     } else {
       // if player did not click on highlighted piece
       for (let i = 0; i < 100; i++) {
@@ -59,16 +78,20 @@ const Game: React.FC = () => {
       for (const i of availableMoves) {
         newGame.gameState[i].highlighted = true;
       }
-    }
 
-    set(reference, newGame);
+      setLocalGame({
+        gameState: newGame.gameState,
+        activeSquare: newGame.gameState[position],
+      });
+    }
   };
 
-  if (gameLoading || !game) return <> nope </>;
+  if (dbGameLoading || !localGame) return <div> waiting ... </div>;
+
   return (
     <>
       <div className="Game">
-        {game.gameState.map((piece: Piece) => {
+        {localGame.gameState.map((piece: Piece) => {
           return (
             <Square
               key={piece.position}
@@ -78,7 +101,7 @@ const Game: React.FC = () => {
           );
         })}
       </div>
-      <h1> {id}</h1>
+      <h1> {gameId}</h1>
     </>
   );
 };

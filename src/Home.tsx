@@ -11,15 +11,8 @@ const Home: React.FC = () => {
   const dummyGame = createDummyGame();
   const createGame = () => {
     set(newGameRef, {
-      opponent: null,
       whoseTurn: "red",
       gameState: dummyGame,
-      activeSquare: {
-        rank: null,
-        position: -1,
-        color: "transparent",
-        highlighted: false,
-      },
     });
   };
 
@@ -31,8 +24,7 @@ const Home: React.FC = () => {
           navigate(`/games/${newGameRef.key}`);
         }}
       >
-        {" "}
-        Create Game{" "}
+        Create Game
       </button>
     </>
   );
