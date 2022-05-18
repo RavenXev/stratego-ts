@@ -86,7 +86,7 @@ const Game: React.FC = () => {
     }
   };
 
-  if (dbGameLoading || !localGame) return <div> waiting ... </div>;
+  if (!dbGame || !localGame) return <div> waiting ... </div>;
 
   return (
     <>
