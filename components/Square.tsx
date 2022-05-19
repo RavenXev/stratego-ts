@@ -2,10 +2,11 @@ import Piece from "../helper-functions/Piece";
 
 interface SquareProps {
   piece: Piece;
+  showPiece: boolean;
   handleClick?: () => void;
 }
 
-const Square: React.FC<SquareProps> = ({ piece, handleClick }) => {
+const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
   const { rank, color, highlighted } = piece;
   let newColor: Piece["color"] = color;
   if (highlighted == true) {
@@ -18,7 +19,7 @@ const Square: React.FC<SquareProps> = ({ piece, handleClick }) => {
       style={{ backgroundColor: newColor }}
       onClick={handleClick}
     >
-      {rank}
+      {showPiece ? rank : ""}
     </div>
   );
 };

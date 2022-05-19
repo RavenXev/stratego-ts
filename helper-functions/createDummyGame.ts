@@ -2,7 +2,20 @@ import Piece from "../helper-functions/Piece";
 
 function createDummyGame() {
   let dummyGame: Piece[] = [];
-  let ranks: Piece["rank"][] = [99, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  let pieces: Piece["rank"][] = [
+    99, 99, 99, 99, 99, 99, 10, 9, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 4, 4,
+    4, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+  ];
+
+  function shuffle(array: Piece["rank"][]) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+  }
+
   for (let i = 0; i < 100; i++) {
     const newSquare: Piece = {
       rank: 0,
@@ -12,7 +25,8 @@ function createDummyGame() {
     };
     newSquare.position = i;
     if (i <= 39) {
-      newSquare.rank = ranks[Math.floor(Math.random() * ranks.length)];
+      shuffle(pieces);
+      newSquare.rank = pieces[i];
       newSquare.color = "blue";
     } else if ([42, 43, 52, 53, 46, 47, 56, 57].includes(i)) {
       newSquare.rank = -1;
@@ -21,7 +35,8 @@ function createDummyGame() {
       newSquare.rank = null;
       newSquare.color = "transparent";
     } else {
-      newSquare.rank = ranks[Math.floor(Math.random() * ranks.length)];
+      shuffle(pieces);
+      newSquare.rank = pieces[i - 60];
       newSquare.color = "red";
     }
 

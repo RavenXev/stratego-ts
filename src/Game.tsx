@@ -10,10 +10,10 @@ import { ref, set } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 
 interface dbGameProps {
-  hostId: string;
-  opponent: string;
+  red: string;
+  blue: string;
   gameState: Piece[];
-  whoseTurn: string;
+  whoseTurn: "red" | "blue";
 }
 
 interface localGameProps {
@@ -27,14 +27,18 @@ interface userIdProp {
 
 const Game: React.FC<userIdProp> = ({ userId }) => {
   const { id: gameId } = useParams();
-  const reference = ref(database, `games/${gameId}`);
+  const dbGameReference = ref(database, `games/${gameId}`);
 
   const [dbGame, dbGameLoading, dbGameError] =
-    useObjectVal<dbGameProps>(reference);
+    useObjectVal<dbGameProps>(dbGameReference);
   const [localGame, setLocalGame] = useState<localGameProps>();
 
   useEffect(() => {
     if (dbGame != null) {
+      if (dbGame.red != userId && dbGame.blue == null) {
+        set(dbGameReference, { ...dbGame, blue: userId });
+      }
+
       setLocalGame({
         gameState: dbGame.gameState,
         activeSquare: {
@@ -62,7 +66,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGameCopy.gameState[i].highlighted = false;
       }
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
-      set(reference, dbGameCopy);
+      set(dbGameReference, dbGameCopy);
     } else {
       // player did not click on highlighted piece
       for (let i = 0; i < 100; i++) {
@@ -90,6 +94,21 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     }
   };
 
+  const showPiece = (piece: Piece) => {
+    if (dbGame != null) {
+      if (piece.rank == null || piece.rank == -1) {
+        return true;
+      }
+      if (dbGame.red == userId && piece.color == "red") {
+        return true;
+      }
+      if (dbGame.blue == userId && piece.color == "blue") {
+        return true;
+      }
+    }
+    return false;
+  };
+
   if (!dbGame || !localGame) return <div> waiting ... </div>;
 
   return (
@@ -100,12 +119,20 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             <Square
               key={piece.position}
               piece={piece}
-              handleClick={() => clickPiece(piece)}
+              showPiece={showPiece(piece)}
+              handleClick={
+                dbGame[dbGame.whoseTurn] == userId
+                  ? () => clickPiece(piece)
+                  : () => {
+                      return;
+                    }
+              }
             />
           );
         })}
       </div>
-      <h1> {gameId}</h1>
+      <p>Game: {gameId}</p>
+      <p>p1: {userId}</p>
     </>
   );
 };

@@ -15,6 +15,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
   const dummyGame = createDummyGame();
   const createGame = () => {
     set(newGameRef, {
+      red: userId,
       whoseTurn: "red",
       gameState: dummyGame,
     });
