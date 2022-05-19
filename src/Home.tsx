@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
 import { set, ref, push } from "firebase/database";
+import { Flex, Button, Heading } from "@chakra-ui/react";
 import createDummyGame from "../helper-functions/createDummyGame";
 
 interface userIdProp {
@@ -10,10 +11,15 @@ interface userIdProp {
 
 const Home: React.FC<userIdProp> = ({ userId }) => {
   const navigate = useNavigate();
+
+  const userRef = ref(database, `/users/${userId}`);
   const allGamesRef = ref(database, "games");
   const newGameRef = push(allGamesRef);
   const dummyGame = createDummyGame();
   const createGame = () => {
+    set(userRef, {
+      currentGame: newGameRef.key,
+    });
     set(newGameRef, {
       red: userId,
       whoseTurn: "red",
@@ -22,16 +28,22 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
   };
 
   return (
-    <>
-      <button
-        onClick={() => {
-          createGame();
-          navigate(`/games/${newGameRef.key}`);
-        }}
-      >
-        Create Game
-      </button>
-    </>
+    <Flex height="100vh" alignItems="center" justifyContent="center">
+      <Flex direction="column" background="gray.100" p={12} rounded="base">
+        <Heading mb={12}> Stratego</Heading>
+        <Button
+          colorScheme="whatsapp"
+          mb={6}
+          onClick={() => {
+            createGame();
+            navigate(`/games/${newGameRef.key}`);
+          }}
+        >
+          Create Game
+        </Button>
+        <Button colorScheme="messenger">Join Game</Button>
+      </Flex>
+    </Flex>
   );
 };
 

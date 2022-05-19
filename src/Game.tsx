@@ -15,11 +15,6 @@ interface dbGameProps {
   whoseTurn: "red" | "blue";
 }
 
-interface localGameProps {
-  gameState: Piece[];
-  activeSquare: Piece;
-}
-
 interface userIdProp {
   userId: string;
 }
@@ -27,10 +22,16 @@ interface userIdProp {
 const Game: React.FC<userIdProp> = ({ userId }) => {
   const { id: gameId } = useParams();
   const dbGameReference = ref(database, `games/${gameId}`);
-
   const [dbGame, dbGameLoading, dbGameError] =
     useObjectVal<dbGameProps>(dbGameReference);
-  const [localGame, setLocalGame] = useState<localGameProps>();
+
+  const [localGameState, setLocalGameState] = useState<Piece[]>();
+  const [activeSquare, setActiveSquare] = useState<Piece>({
+    rank: null,
+    position: -1,
+    color: "transparent",
+    highlighted: false,
+  });
 
   useEffect(() => {
     if (dbGame != null) {
@@ -38,26 +39,19 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         set(dbGameReference, { ...dbGame, blue: userId });
       }
 
-      setLocalGame({
-        gameState: dbGame.gameState,
-        activeSquare: {
-          rank: null,
-          position: -1,
-          color: "transparent",
-          highlighted: false,
-        },
-      });
+      setLocalGameState(dbGame.gameState);
     }
-  }, [dbGame]);
+  }, [dbGame?.gameState]);
+
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
 
-    if (!localGame || !dbGame) return null;
+    if (!localGameState || !dbGame) return null;
     let dbGameCopy: dbGameProps = { ...dbGame };
 
     if (highlighted === true) {
       dbGameCopy.gameState = captureSquare(
-        localGame.activeSquare["position"],
+        activeSquare["position"],
         position,
         dbGame.gameState
       );
@@ -86,14 +80,12 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       for (const i of availableMoves) {
         dbGameCopy.gameState[i].highlighted = true;
       }
-      setLocalGame({
-        gameState: dbGameCopy.gameState,
-        activeSquare: dbGameCopy.gameState[position],
-      });
+      setLocalGameState(dbGameCopy.gameState);
+      setActiveSquare(dbGameCopy.gameState[position]);
     }
   };
 
-  const showPiece = (piece: Piece) => {
+  const isPieceDisplayed = (piece: Piece) => {
     if (dbGame != null) {
       if (piece.rank == null || piece.rank == -1) {
         return true;
@@ -108,22 +100,22 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     return false;
   };
 
-  if (!dbGame || !localGame) return <div> waiting ... </div>;
-
+  if (!dbGame || !localGameState) return <div> waiting ... </div>;
+  if (!dbGame.blue) return <div>no second player!</div>;
   return (
     <>
-      <Center>
+      <Center w="100vw" h="100vh">
         <Grid
           templateColumns="repeat(10,50px)"
           templateRows="repeat(10, 50px)"
           gap="1px"
         >
-          {localGame.gameState.map((piece: Piece) => {
+          {localGameState.map((piece: Piece) => {
             return (
               <Square
                 key={piece.position}
                 piece={piece}
-                showPiece={showPiece(piece)}
+                isPieceDisplayed={isPieceDisplayed(piece)}
                 handleClick={
                   dbGame[dbGame.whoseTurn] == userId
                     ? () => clickPiece(piece)
@@ -136,8 +128,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           })}
         </Grid>
       </Center>
-      <p>Game: {gameId}</p>
-      <p>p1: {userId}</p>
     </>
   );
 };

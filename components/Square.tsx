@@ -3,11 +3,15 @@ import { Center, GridItem } from "@chakra-ui/react";
 import { BiBomb, BiWater, BiFlag } from "react-icons/bi";
 interface SquareProps {
   piece: Piece;
-  showPiece: boolean;
+  isPieceDisplayed: boolean;
   handleClick?: () => void;
 }
 
-const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
+const Square: React.FC<SquareProps> = ({
+  piece,
+  isPieceDisplayed,
+  handleClick,
+}) => {
   const { rank, color, highlighted } = piece;
 
   let newColor: Piece["color"] = color;
@@ -30,7 +34,7 @@ const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
       renderedColor = "#FEFCBF";
   }
 
-  if (showPiece && rank === 99) {
+  if (isPieceDisplayed && rank === 99) {
     return (
       <Center
         border="1px"
@@ -44,7 +48,7 @@ const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
     );
   }
 
-  if (showPiece && rank == -1) {
+  if (isPieceDisplayed && rank == -1) {
     return (
       <Center
         border="1px"
@@ -58,7 +62,7 @@ const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
     );
   }
 
-  if (showPiece && rank == 0) {
+  if (isPieceDisplayed && rank == 0) {
     return (
       <Center
         border="1px"
@@ -73,7 +77,7 @@ const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
   }
   return (
     <Center
-      _hover={{ opacity: "0.5" }}
+      _hover={{ opacity: 0.5 }}
       onClick={handleClick}
       bg={renderedColor}
       color="white"
@@ -81,7 +85,7 @@ const Square: React.FC<SquareProps> = ({ piece, showPiece, handleClick }) => {
       borderColor="gray.300"
     >
       <GridItem fontSize="lg" fontWeight="bold">
-        {showPiece ? rank : ""}
+        {isPieceDisplayed ? rank : ""}
       </GridItem>
     </Center>
   );
