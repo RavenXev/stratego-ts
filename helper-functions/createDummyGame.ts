@@ -6,8 +6,8 @@ function createDummyGame() {
     99, 99, 99, 99, 99, 99, 10, 9, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 4, 4,
     4, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
   ];
-
-  function shuffle(array: Piece["rank"][]) {
+  let pieces2: Piece["rank"][] = [...pieces];
+  function shuffleArray(array: Piece["rank"][]) {
     for (var i = array.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
       var temp = array[i];
@@ -16,6 +16,8 @@ function createDummyGame() {
     }
   }
 
+  shuffleArray(pieces);
+  shuffleArray(pieces2);
   for (let i = 0; i < 100; i++) {
     const newSquare: Piece = {
       rank: 0,
@@ -24,8 +26,8 @@ function createDummyGame() {
       highlighted: false,
     };
     newSquare.position = i;
+
     if (i <= 39) {
-      shuffle(pieces);
       newSquare.rank = pieces[i];
       newSquare.color = "blue";
     } else if ([42, 43, 52, 53, 46, 47, 56, 57].includes(i)) {
@@ -35,8 +37,7 @@ function createDummyGame() {
       newSquare.rank = null;
       newSquare.color = "transparent";
     } else {
-      shuffle(pieces);
-      newSquare.rank = pieces[i - 60];
+      newSquare.rank = pieces2[i - 60];
       newSquare.color = "red";
     }
 

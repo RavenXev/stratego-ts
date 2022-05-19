@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./Game.css";
 import Piece from "../helper-functions/Piece";
 import Square from "../components/Square";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
@@ -8,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
 import { ref, set } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
-
+import { Center, Grid } from "@chakra-ui/react";
 interface dbGameProps {
   red: string;
   blue: string;
@@ -83,10 +82,10 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         color,
         dbGameCopy.gameState
       );
+
       for (const i of availableMoves) {
         dbGameCopy.gameState[i].highlighted = true;
       }
-
       setLocalGame({
         gameState: dbGameCopy.gameState,
         activeSquare: dbGameCopy.gameState[position],
@@ -113,24 +112,30 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
   return (
     <>
-      <div className="Game">
-        {localGame.gameState.map((piece: Piece) => {
-          return (
-            <Square
-              key={piece.position}
-              piece={piece}
-              showPiece={showPiece(piece)}
-              handleClick={
-                dbGame[dbGame.whoseTurn] == userId
-                  ? () => clickPiece(piece)
-                  : () => {
-                      return;
-                    }
-              }
-            />
-          );
-        })}
-      </div>
+      <Center>
+        <Grid
+          templateColumns="repeat(10,50px)"
+          templateRows="repeat(10, 50px)"
+          gap="1px"
+        >
+          {localGame.gameState.map((piece: Piece) => {
+            return (
+              <Square
+                key={piece.position}
+                piece={piece}
+                showPiece={showPiece(piece)}
+                handleClick={
+                  dbGame[dbGame.whoseTurn] == userId
+                    ? () => clickPiece(piece)
+                    : () => {
+                        return;
+                      }
+                }
+              />
+            );
+          })}
+        </Grid>
+      </Center>
       <p>Game: {gameId}</p>
       <p>p1: {userId}</p>
     </>
