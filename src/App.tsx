@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { auth, database } from "../backend/config";
 import { signInAnonymously } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { ref, set, onDisconnect } from "firebase/database";
+import { ref, set, onDisconnect, get } from "firebase/database";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Game from "./Game";
 import Home from "./Home";
@@ -16,9 +16,10 @@ const App: React.FC = () => {
     const userRef = ref(database, `/users/${user?.uid}`);
     if (user) {
       set(userRef, {
-        id: user.uid,
+        currentGame: "",
       });
     }
+
     onDisconnect(userRef).remove();
   }, [user]);
 

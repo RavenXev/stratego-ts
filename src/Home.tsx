@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
-import { set, ref, push } from "firebase/database";
+import { set, ref, push, child } from "firebase/database";
 import { Flex, Button, Heading } from "@chakra-ui/react";
 import createDummyGame from "../helper-functions/createDummyGame";
 
@@ -20,12 +20,15 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
     set(userRef, {
       currentGame: newGameRef.key,
     });
+
     set(newGameRef, {
-      red: userId,
-      blue: "",
       whoseTurn: "red",
       gameState: dummyGame,
+      red: userId,
+      blue: "",
     });
+    // const newGamePlayersRef = ref(database, `games/${newGameRef.key}/players`);
+    // set(child(newGamePlayersRef, userId), "red");
   };
 
   return (

@@ -5,10 +5,11 @@ import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set } from "firebase/database";
+import { ref, set, onDisconnect } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { Center, Grid } from "@chakra-ui/react";
 interface dbGameProps {
+  isOpponentFound: boolean;
   red: string;
   blue: string;
   gameState: Piece[];
@@ -24,7 +25,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   const dbGameReference = ref(database, `games/${gameId}`);
   const [dbGame, dbGameLoading, dbGameError] =
     useObjectVal<dbGameProps>(dbGameReference);
-
   const [localGameState, setLocalGameState] = useState<Piece[]>();
   const [activeSquare, setActiveSquare] = useState<Piece>({
     rank: null,
@@ -38,8 +38,24 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       if (dbGame.red != userId && dbGame.blue === "") {
         set(dbGameReference, { ...dbGame, blue: userId });
       }
+      if (dbGame.blue != userId && dbGame.red === "") {
+        set(dbGameReference, { ...dbGame, red: userId });
+      }
+      const userRef = ref(database, `/users/${userId}`);
+      set(userRef, {
+        currentGame: gameId,
+      });
 
+      let currentPlayerUpdateObject: { red?: string; blue?: string } = {};
+
+      if (dbGame.red == userId) {
+        currentPlayerUpdateObject["red"] = "";
+      }
+      if (dbGame.blue == userId) {
+        currentPlayerUpdateObject["blue"] = "";
+      }
       setLocalGameState(dbGame.gameState);
+      onDisconnect(dbGameReference).update(currentPlayerUpdateObject);
     }
   }, [dbGame?.gameState]);
 
