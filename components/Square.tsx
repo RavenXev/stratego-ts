@@ -43,7 +43,7 @@ const Square: React.FC<SquareProps> = ({
         bg={renderedColor}
         color="white"
       >
-        <BiBomb size="25px" />
+        <BiBomb size="50%" />
       </Center>
     );
   }
@@ -57,7 +57,7 @@ const Square: React.FC<SquareProps> = ({
         bg="#C4F1F9"
         color="white"
       >
-        <BiWater size="25px" />
+        <BiWater size="50%" />
       </Center>
     );
   }
@@ -71,7 +71,7 @@ const Square: React.FC<SquareProps> = ({
         bg={renderedColor}
         color="white"
       >
-        <BiFlag size="25px" />
+        <BiFlag size="50%" />
       </Center>
     );
   }

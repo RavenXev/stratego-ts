@@ -35,7 +35,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
   useEffect(() => {
     if (dbGame != null) {
-      if (dbGame.red != userId && dbGame.blue == null) {
+      if (dbGame.red != userId && dbGame.blue === "") {
         set(dbGameReference, { ...dbGame, blue: userId });
       }
 
