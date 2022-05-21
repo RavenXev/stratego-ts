@@ -14,13 +14,12 @@ const App: React.FC = () => {
       console.log(error);
     });
     const userRef = ref(database, `/users/${user?.uid}`);
+    onDisconnect(userRef).remove();
     if (user) {
       set(userRef, {
         currentGame: "",
       });
     }
-
-    onDisconnect(userRef).remove();
   }, [user]);
 
   console.log(user);

@@ -35,34 +35,45 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
   useEffect(() => {
     if (dbGame != null) {
+      //check if there is a blank player
+      //set other player to userId
       if (dbGame.red != userId && dbGame.blue === "") {
         set(dbGameReference, { ...dbGame, blue: userId });
       }
       if (dbGame.blue != userId && dbGame.red === "") {
         set(dbGameReference, { ...dbGame, red: userId });
       }
+
+      //set userId
       const userRef = ref(database, `/users/${userId}`);
       set(userRef, {
         currentGame: gameId,
       });
 
+      //set onDisconnect update object
       let currentPlayerUpdateObject: { red?: string; blue?: string } = {};
-
       if (dbGame.red == userId) {
         currentPlayerUpdateObject["red"] = "";
-      }
-      if (dbGame.blue == userId) {
+      } else if (dbGame.blue == userId) {
         currentPlayerUpdateObject["blue"] = "";
       }
+      //onDisconnect logic
+      const onDisconnectRef = onDisconnect(dbGameReference);
+      if (dbGame.red == "" || dbGame.blue == "") {
+        onDisconnectRef.remove();
+      } else if (dbGame.red !== "" && dbGame.blue !== "") {
+        onDisconnectRef.cancel();
+        onDisconnectRef.update(currentPlayerUpdateObject);
+      }
+
       setLocalGameState(dbGame.gameState);
-      onDisconnect(dbGameReference).update(currentPlayerUpdateObject);
     }
-  }, [dbGame?.gameState]);
+  }, [dbGame]);
 
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
 
-    if (!localGameState || !dbGame) return null;
+    if (!dbGame) return null;
     let dbGameCopy: dbGameProps = { ...dbGame };
 
     if (highlighted === true) {
