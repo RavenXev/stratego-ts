@@ -14,6 +14,7 @@ interface dbGameProps {
   blue: string;
   gameState: Piece[];
   whoseTurn: "red" | "blue";
+  lastMove: Piece[];
 }
 
 interface userIdProp {
@@ -73,7 +74,16 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   const clickPiece = (piece: Piece) => {
     const { rank, position, color, highlighted } = piece;
 
-    if (!dbGame) return null;
+    if (!dbGame) {
+      // if there is no game in the database
+      return;
+    }
+
+    if (dbGame[dbGame.whoseTurn] != userId) {
+      // if its not the player's turn
+      return;
+    }
+
     let dbGameCopy: dbGameProps = { ...dbGame };
 
     if (highlighted === true) {
@@ -86,12 +96,9 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGameCopy.gameState[i].highlighted = false;
       }
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
-      setActiveSquare({
-        rank: null,
-        position: -1,
-        color: "transparent",
-        highlighted: false,
-      });
+      dbGameCopy.lastMove = [];
+      dbGameCopy.lastMove.push(activeSquare);
+
       set(dbGameReference, dbGameCopy);
     } else {
       // player did not click on highlighted piece
@@ -162,13 +169,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                   piece={piece}
                   activeSquare={activeSquare}
                   isPieceDisplayed={isPieceDisplayed(piece)}
-                  handleClick={
-                    dbGame[dbGame.whoseTurn] == userId
-                      ? () => clickPiece(piece)
-                      : () => {
-                          return;
-                        }
-                  }
+                  handleClick={() => clickPiece(piece)}
                 />
               );
             })}

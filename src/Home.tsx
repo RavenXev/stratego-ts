@@ -26,6 +26,14 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
       gameState: dummyGame,
       red: userId,
       blue: "",
+      lastMove: [
+        {
+          rank: null,
+          position: -1,
+          color: "transparent",
+          highlighted: false,
+        },
+      ],
     });
   };
 

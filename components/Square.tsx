@@ -42,7 +42,7 @@ const Square: React.FC<SquareProps> = ({
         <Center
           border="1px"
           borderColor="gray.300"
-          w="50px"
+          w="100%"
           onClick={handleClick}
           bg={`${color}.200`}
           color={`${color}.700`}
@@ -59,7 +59,7 @@ const Square: React.FC<SquareProps> = ({
         <Center
           border="1px"
           borderColor="gray.300"
-          w="50px"
+          w="100%"
           onClick={handleClick}
           bg={renderedColor}
           color="white"
@@ -71,12 +71,13 @@ const Square: React.FC<SquareProps> = ({
   }
 
   if (isPieceDisplayed && rank === 99) {
+    // your bombs
     return (
       <Center
         border="1px"
         borderColor="gray.300"
-        w="50px"
-        bg={renderedColor}
+        w="100%"
+        bg={`${color}.500`}
         color="white"
       >
         <BiBomb size="50%" />
@@ -84,12 +85,13 @@ const Square: React.FC<SquareProps> = ({
     );
   }
 
-  if (isPieceDisplayed && rank == -1) {
+  if (rank == -1) {
+    // lakes in the middle
     return (
       <Center
         border="1px"
         borderColor="gray.300"
-        w="50px"
+        w="100%"
         bg="#C4F1F9"
         color="white"
       >
@@ -99,12 +101,13 @@ const Square: React.FC<SquareProps> = ({
   }
 
   if (isPieceDisplayed && rank == 0) {
+    // your flag
     return (
       <Center
         border="1px"
         borderColor="gray.300"
-        w="50px"
-        bg={renderedColor}
+        w="100%"
+        bg={`${color}.500`}
         color="white"
       >
         <BiFlag size="50%" />
