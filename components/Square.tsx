@@ -1,6 +1,6 @@
 import Piece from "../helper-functions/Piece";
 import { Center, GridItem } from "@chakra-ui/react";
-import { BiBomb, BiWater, BiFlag } from "react-icons/bi";
+import { BiBomb, BiWater, BiFlag, BiX } from "react-icons/bi";
 interface SquareProps {
   piece: Piece;
   isPieceDisplayed: boolean;
@@ -35,18 +35,37 @@ const Square: React.FC<SquareProps> = ({
   }
 
   if (!isPieceDisplayed) {
-    return (
-      <Center
-        border="1px"
-        borderColor="gray.300"
-        w="50px"
-        onClick={handleClick}
-        bg={renderedColor}
-        color="white"
-      >
-        <GridItem></GridItem>
-      </Center>
-    );
+    if (highlighted == true && (color == "red" || color == "blue")) {
+      return (
+        <Center
+          border="1px"
+          borderColor="gray.300"
+          w="50px"
+          onClick={handleClick}
+          bg={renderedColor}
+          color={`${color}.700`}
+        >
+          <GridItem>
+            <Center>
+              <BiX size="90%" />
+            </Center>
+          </GridItem>
+        </Center>
+      );
+    } else {
+      return (
+        <Center
+          border="1px"
+          borderColor="gray.300"
+          w="50px"
+          onClick={handleClick}
+          bg={renderedColor}
+          color="white"
+        >
+          <GridItem></GridItem>
+        </Center>
+      );
+    }
   }
 
   if (isPieceDisplayed && rank === 99) {

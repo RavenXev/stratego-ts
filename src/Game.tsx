@@ -129,6 +129,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
   if (!dbGame || !localGameState) return <div> waiting ... </div>;
   if (!dbGame.blue || !dbGame.red) return <div>no second player!</div>;
+
   return (
     <>
       <Center w="100vw" h="100vh">
