@@ -5,9 +5,9 @@ import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect, remove, update } from "firebase/database";
+import { ref, set, onDisconnect } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
-import { Center, Grid } from "@chakra-ui/react";
+import { Center, Grid, Alert, VStack, Spinner, HStack } from "@chakra-ui/react";
 interface dbGameProps {
   isOpponentFound: boolean;
   red: string;
@@ -132,29 +132,40 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   return (
     <>
       <Center w="100vw" h="100vh">
-        <Grid
-          templateColumns="repeat(10,50px)"
-          templateRows="repeat(10, 50px)"
-          gap="1px"
-          opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
-        >
-          {localGameState.map((piece: Piece) => {
-            return (
-              <Square
-                key={piece.position}
-                piece={piece}
-                isPieceDisplayed={isPieceDisplayed(piece)}
-                handleClick={
-                  dbGame[dbGame.whoseTurn] == userId
-                    ? () => clickPiece(piece)
-                    : () => {
-                        return;
-                      }
-                }
-              />
-            );
-          })}
-        </Grid>
+        <VStack>
+          <Alert
+            status={dbGame[dbGame.whoseTurn] == userId ? "success" : "warning"}
+            variant="top-accent"
+            color="gray.600"
+          >
+            {dbGame[dbGame.whoseTurn] == userId
+              ? "It is your turn!"
+              : "Waiting for opponent..."}
+          </Alert>
+          <Grid
+            templateColumns="repeat(10,50px)"
+            templateRows="repeat(10, 50px)"
+            gap="1px"
+            opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
+          >
+            {localGameState.map((piece: Piece) => {
+              return (
+                <Square
+                  key={piece.position}
+                  piece={piece}
+                  isPieceDisplayed={isPieceDisplayed(piece)}
+                  handleClick={
+                    dbGame[dbGame.whoseTurn] == userId
+                      ? () => clickPiece(piece)
+                      : () => {
+                          return;
+                        }
+                  }
+                />
+              );
+            })}
+          </Grid>
+        </VStack>
       </Center>
     </>
   );
