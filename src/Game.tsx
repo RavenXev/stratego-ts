@@ -86,6 +86,12 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGameCopy.gameState[i].highlighted = false;
       }
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
+      setActiveSquare({
+        rank: null,
+        position: -1,
+        color: "transparent",
+        highlighted: false,
+      });
       set(dbGameReference, dbGameCopy);
     } else {
       // player did not click on highlighted piece
@@ -154,6 +160,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                 <Square
                   key={piece.position}
                   piece={piece}
+                  activeSquare={activeSquare}
                   isPieceDisplayed={isPieceDisplayed(piece)}
                   handleClick={
                     dbGame[dbGame.whoseTurn] == userId

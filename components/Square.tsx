@@ -4,15 +4,17 @@ import { BiBomb, BiWater, BiFlag, BiX } from "react-icons/bi";
 interface SquareProps {
   piece: Piece;
   isPieceDisplayed: boolean;
+  activeSquare?: Piece;
   handleClick?: () => void;
 }
 
 const Square: React.FC<SquareProps> = ({
   piece,
   isPieceDisplayed,
+  activeSquare,
   handleClick,
 }) => {
-  const { rank, color, highlighted } = piece;
+  const { rank, position, color, highlighted } = piece;
 
   let newColor: Piece["color"] = color;
   if (highlighted == true) {
@@ -42,12 +44,12 @@ const Square: React.FC<SquareProps> = ({
           borderColor="gray.300"
           w="50px"
           onClick={handleClick}
-          bg={renderedColor}
+          bg={`${color}.200`}
           color={`${color}.700`}
         >
           <GridItem>
             <Center>
-              <BiX size="90%" />
+              <BiX size="90%" opacity="100%" />
             </Center>
           </GridItem>
         </Center>
@@ -109,11 +111,12 @@ const Square: React.FC<SquareProps> = ({
       </Center>
     );
   }
+
   return (
     <Center
       _hover={{ opacity: 0.5 }}
       onClick={handleClick}
-      bg={renderedColor}
+      bg={activeSquare?.position == position ? `${color}.700` : renderedColor}
       color="white"
       border="1px"
       borderColor="gray.300"
