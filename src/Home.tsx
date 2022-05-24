@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { database } from "../backend/config";
 import { set, ref, push, child } from "firebase/database";
 import { Flex, Button, Heading } from "@chakra-ui/react";
@@ -11,11 +11,11 @@ interface userIdProp {
 
 const Home: React.FC<userIdProp> = ({ userId }) => {
   const navigate = useNavigate();
-
   const userRef = ref(database, `/users/${userId}`);
   const allGamesRef = ref(database, "games");
   const newGameRef = push(allGamesRef);
   const dummyGame = createDummyGame();
+
   const createGame = () => {
     set(userRef, {
       currentGame: newGameRef.key,
@@ -27,8 +27,6 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
       red: userId,
       blue: "",
     });
-    // const newGamePlayersRef = ref(database, `games/${newGameRef.key}/players`);
-    // set(child(newGamePlayersRef, userId), "red");
   };
 
   return (

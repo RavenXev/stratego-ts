@@ -5,7 +5,7 @@ import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect } from "firebase/database";
+import { ref, set, onDisconnect, remove, update } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { Center, Grid } from "@chakra-ui/react";
 interface dbGameProps {
@@ -128,7 +128,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   };
 
   if (!dbGame || !localGameState) return <div> waiting ... </div>;
-  if (!dbGame.blue) return <div>no second player!</div>;
+  if (!dbGame.blue || !dbGame.red) return <div>no second player!</div>;
   return (
     <>
       <Center w="100vw" h="100vh">

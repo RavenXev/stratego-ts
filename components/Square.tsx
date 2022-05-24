@@ -34,6 +34,21 @@ const Square: React.FC<SquareProps> = ({
       renderedColor = "#FEFCBF";
   }
 
+  if (!isPieceDisplayed) {
+    return (
+      <Center
+        border="1px"
+        borderColor="gray.300"
+        w="50px"
+        onClick={handleClick}
+        bg={renderedColor}
+        color="white"
+      >
+        <GridItem></GridItem>
+      </Center>
+    );
+  }
+
   if (isPieceDisplayed && rank === 99) {
     return (
       <Center
@@ -85,7 +100,7 @@ const Square: React.FC<SquareProps> = ({
       borderColor="gray.300"
     >
       <GridItem fontSize="lg" fontWeight="bold">
-        {isPieceDisplayed ? rank : ""}
+        {rank}
       </GridItem>
     </Center>
   );
