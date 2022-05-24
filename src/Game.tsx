@@ -136,6 +136,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           templateColumns="repeat(10,50px)"
           templateRows="repeat(10, 50px)"
           gap="1px"
+          opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
         >
           {localGameState.map((piece: Piece) => {
             return (
