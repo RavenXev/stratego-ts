@@ -33,7 +33,7 @@ const Square: React.FC<SquareProps> = ({
       renderedColor = "transparent";
       break;
     case "yellow":
-      renderedColor = "#FEFCBF";
+      renderedColor = "#ECC94B";
   }
 
   if (!isPieceDisplayed) {
