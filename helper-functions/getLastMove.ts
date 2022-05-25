@@ -3,13 +3,13 @@
  * @param start
  * @param end
  */
-interface ReturnProps {
+export interface ReturnLastMovesProps {
   direction: "up" | "down" | "left" | "right" | "";
   positions: number[];
 }
 
-function getLastMove(start: number, end: number): ReturnProps {
-  let returnObject: ReturnProps = { direction: "", positions: [] };
+function getLastMove(start: number, end: number): ReturnLastMovesProps {
+  let returnObject: ReturnLastMovesProps = { direction: "", positions: [] };
   let currentPosition = start;
   if (start % 10 == end % 10) {
     // same column, check for up and down

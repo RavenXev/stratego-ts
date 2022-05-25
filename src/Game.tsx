@@ -8,13 +8,15 @@ import { database } from "../backend/config";
 import { ref, set, onDisconnect } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { Center, Grid, Alert, VStack } from "@chakra-ui/react";
-import getLastMove from "../helper-functions/getLastMove";
+import getLastMove, {
+  ReturnLastMovesProps,
+} from "../helper-functions/getLastMove";
 interface dbGameProps {
   red: string;
   blue: string;
   gameState: Piece[];
   whoseTurn: "red" | "blue";
-  lastMoves: { direction: string; positions: number[] };
+  lastMoves: ReturnLastMovesProps;
   lastActivePiece: Piece;
 }
 
@@ -100,7 +102,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
       dbGameCopy.lastActivePiece = dbGameCopy.gameState[position];
       dbGameCopy.lastMoves = getLastMove(activeSquare.position, position);
-      console.log(dbGameCopy.lastMoves);
       set(dbGameReference, dbGameCopy);
     } else {
       // player did not click on highlighted piece
@@ -171,6 +172,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                   piece={piece}
                   activeSquare={activeSquare}
                   lastActivePiece={dbGame.lastActivePiece}
+                  lastMoves={dbGame.lastMoves}
+                  whoseTurn={dbGame.whoseTurn}
                   isPieceDisplayed={isPieceDisplayed(piece)}
                   handleClick={() => clickPiece(piece)}
                 />

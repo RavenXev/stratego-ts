@@ -1,11 +1,24 @@
 import Piece from "../helper-functions/Piece";
 import { Center, GridItem } from "@chakra-ui/react";
-import { BiBomb, BiWater, BiFlag, BiX, BiXCircle } from "react-icons/bi";
+import {
+  BiBomb,
+  BiWater,
+  BiFlag,
+  BiX,
+  BiXCircle,
+  BiChevronDown,
+  BiChevronRight,
+  BiChevronUp,
+  BiChevronLeft,
+} from "react-icons/bi";
+import { ReturnLastMovesProps } from "../helper-functions/getLastMove";
 interface SquareProps {
   piece: Piece;
   isPieceDisplayed: boolean;
   activeSquare?: Piece;
   lastActivePiece?: Piece;
+  lastMoves: ReturnLastMovesProps;
+  whoseTurn: "red" | "blue";
   handleClick?: () => void;
 }
 
@@ -19,6 +32,8 @@ const Square: React.FC<SquareProps> = ({
   piece,
   isPieceDisplayed,
   lastActivePiece,
+  whoseTurn,
+  lastMoves,
   activeSquare,
   handleClick,
 }) => {
@@ -32,6 +47,52 @@ const Square: React.FC<SquareProps> = ({
       </Center>
     );
   }
+  if (lastMoves.positions != null && lastMoves.positions.includes(position)) {
+    // the arrow path of the last move
+    const lastMoveColor = whoseTurn == "red" ? "blue" : "red";
+    switch (lastMoves.direction) {
+      case "up":
+        return (
+          <Center
+            {...SquareTemplateProps}
+            bg={color}
+            color={`${lastMoveColor}.600`}
+          >
+            <BiChevronUp size="90%" />
+          </Center>
+        );
+      case "down":
+        return (
+          <Center
+            {...SquareTemplateProps}
+            bg={color}
+            color={`${lastMoveColor}.600`}
+          >
+            <BiChevronDown size="90%" />
+          </Center>
+        );
+      case "right":
+        return (
+          <Center
+            {...SquareTemplateProps}
+            bg={color}
+            color={`${lastMoveColor}.600`}
+          >
+            <BiChevronRight size="90%" />
+          </Center>
+        );
+      case "left":
+        return (
+          <Center
+            {...SquareTemplateProps}
+            bg={color}
+            color={`${lastMoveColor}.600`}
+          >
+            <BiChevronLeft size="90%" />
+          </Center>
+        );
+    }
+  }
 
   if (!isPieceDisplayed) {
     if (highlighted == true && (color == "red" || color == "blue")) {
@@ -43,13 +104,18 @@ const Square: React.FC<SquareProps> = ({
           bg={`${color}.200`}
           color={`${color}.700`}
         >
-          <BiX size="90%" opacity="100%" />
+          <BiX size="90%" />
         </Center>
       );
     } else if (position == lastActivePiece?.position) {
+      // last piece that moved
       return (
-        <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
-          <BiXCircle size="50%" />
+        <Center
+          {...SquareTemplateProps}
+          bg={`${color}.500`}
+          color={lastActivePiece.color == "transparent" ? "gray.600" : "white"}
+        >
+          <BiXCircle size="90%" />
         </Center>
       );
     } else {
