@@ -1,10 +1,11 @@
 import Piece from "../helper-functions/Piece";
 import { Center, GridItem } from "@chakra-ui/react";
-import { BiBomb, BiWater, BiFlag, BiX } from "react-icons/bi";
+import { BiBomb, BiWater, BiFlag, BiX, BiXCircle } from "react-icons/bi";
 interface SquareProps {
   piece: Piece;
   isPieceDisplayed: boolean;
   activeSquare?: Piece;
+  lastActivePiece?: Piece;
   handleClick?: () => void;
 }
 
@@ -17,6 +18,7 @@ const SquareTemplateProps = {
 const Square: React.FC<SquareProps> = ({
   piece,
   isPieceDisplayed,
+  lastActivePiece,
   activeSquare,
   handleClick,
 }) => {
@@ -42,6 +44,12 @@ const Square: React.FC<SquareProps> = ({
           color={`${color}.700`}
         >
           <BiX size="90%" opacity="100%" />
+        </Center>
+      );
+    } else if (position == lastActivePiece?.position) {
+      return (
+        <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
+          <BiXCircle size="50%" />
         </Center>
       );
     } else {

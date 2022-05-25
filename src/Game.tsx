@@ -7,14 +7,15 @@ import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
 import { ref, set, onDisconnect } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
-import { Center, Grid, Alert, VStack, Spinner, HStack } from "@chakra-ui/react";
+import { Center, Grid, Alert, VStack } from "@chakra-ui/react";
+import getLastMove from "../helper-functions/getLastMove";
 interface dbGameProps {
-  isOpponentFound: boolean;
   red: string;
   blue: string;
   gameState: Piece[];
   whoseTurn: "red" | "blue";
-  lastMoves: Piece[];
+  lastMoves: { direction: string; positions: number[] };
+  lastActivePiece: Piece;
 }
 
 interface userIdProp {
@@ -87,6 +88,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     let dbGameCopy: dbGameProps = { ...dbGame };
 
     if (highlighted === true) {
+      //clicked on highlighted piece
       dbGameCopy.gameState = captureSquare(
         activeSquare["position"],
         position,
@@ -96,9 +98,9 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGameCopy.gameState[i].highlighted = false;
       }
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
-      dbGameCopy.lastMoves = [];
-      dbGameCopy.lastMoves.push(activeSquare);
-
+      dbGameCopy.lastActivePiece = dbGameCopy.gameState[position];
+      dbGameCopy.lastMoves = getLastMove(activeSquare.position, position);
+      console.log(dbGameCopy.lastMoves);
       set(dbGameReference, dbGameCopy);
     } else {
       // player did not click on highlighted piece
@@ -168,6 +170,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                   key={piece.position}
                   piece={piece}
                   activeSquare={activeSquare}
+                  lastActivePiece={dbGame.lastActivePiece}
                   isPieceDisplayed={isPieceDisplayed(piece)}
                   handleClick={() => clickPiece(piece)}
                 />

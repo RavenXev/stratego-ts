@@ -34,6 +34,12 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
           highlighted: false,
         },
       ],
+      lastActivePiece: {
+        rank: null,
+        position: -1,
+        color: "transparent",
+        highlighted: false,
+      },
     });
   };
 
