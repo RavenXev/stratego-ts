@@ -8,61 +8,49 @@ interface SquareProps {
   handleClick?: () => void;
 }
 
+const SquareTemplateProps = {
+  border: "1px",
+  borderColor: "gray.300",
+  w: "100%",
+};
+
 const Square: React.FC<SquareProps> = ({
   piece,
   isPieceDisplayed,
   activeSquare,
   handleClick,
 }) => {
-  const { rank, position, color, highlighted } = piece;
+  let { rank, position, color, highlighted } = piece;
 
-  let newColor: Piece["color"] = color;
-  if (highlighted == true) {
-    newColor = "yellow";
-  }
-
-  let renderedColor;
-  switch (newColor) {
-    case "red":
-      renderedColor = "#E53E3E";
-      break;
-    case "blue":
-      renderedColor = "#3182CE";
-      break;
-    case "transparent":
-      renderedColor = "transparent";
-      break;
-    case "yellow":
-      renderedColor = "#ECC94B";
+  if (rank == -1) {
+    // lakes in the middle
+    return (
+      <Center {...SquareTemplateProps} bg="#C4F1F9" color="white">
+        <BiWater size="50%" />
+      </Center>
+    );
   }
 
   if (!isPieceDisplayed) {
     if (highlighted == true && (color == "red" || color == "blue")) {
+      // highlighted enemy piece
       return (
         <Center
-          border="1px"
-          borderColor="gray.300"
-          w="100%"
+          {...SquareTemplateProps}
           onClick={handleClick}
           bg={`${color}.200`}
           color={`${color}.700`}
         >
-          <GridItem>
-            <Center>
-              <BiX size="90%" opacity="100%" />
-            </Center>
-          </GridItem>
+          <BiX size="90%" opacity="100%" />
         </Center>
       );
     } else {
       return (
+        // enemy piece
         <Center
-          border="1px"
-          borderColor="gray.300"
-          w="100%"
+          {...SquareTemplateProps}
           onClick={handleClick}
-          bg={renderedColor}
-          color="white"
+          bg={`${color}.500`}
         >
           <GridItem></GridItem>
         </Center>
@@ -73,29 +61,8 @@ const Square: React.FC<SquareProps> = ({
   if (isPieceDisplayed && rank === 99) {
     // your bombs
     return (
-      <Center
-        border="1px"
-        borderColor="gray.300"
-        w="100%"
-        bg={`${color}.500`}
-        color="white"
-      >
+      <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
         <BiBomb size="50%" />
-      </Center>
-    );
-  }
-
-  if (rank == -1) {
-    // lakes in the middle
-    return (
-      <Center
-        border="1px"
-        borderColor="gray.300"
-        w="100%"
-        bg="#C4F1F9"
-        color="white"
-      >
-        <BiWater size="50%" />
       </Center>
     );
   }
@@ -103,26 +70,26 @@ const Square: React.FC<SquareProps> = ({
   if (isPieceDisplayed && rank == 0) {
     // your flag
     return (
-      <Center
-        border="1px"
-        borderColor="gray.300"
-        w="100%"
-        bg={`${color}.500`}
-        color="white"
-      >
+      <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
         <BiFlag size="50%" />
       </Center>
     );
   }
 
+  //your movable pieces and yellow highlights
   return (
     <Center
+      {...SquareTemplateProps}
       _hover={{ opacity: 0.5 }}
       onClick={handleClick}
-      bg={activeSquare?.position == position ? `${color}.700` : renderedColor}
+      bg={
+        activeSquare?.position == position
+          ? `${color}.700`
+          : highlighted == true
+          ? "#F6E05E" // yellow highlight
+          : `${color}.500`
+      }
       color="white"
-      border="1px"
-      borderColor="gray.300"
     >
       <GridItem fontSize="lg" fontWeight="bold">
         {rank}

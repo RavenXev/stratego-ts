@@ -14,7 +14,7 @@ interface dbGameProps {
   blue: string;
   gameState: Piece[];
   whoseTurn: "red" | "blue";
-  lastMove: Piece[];
+  lastMoves: Piece[];
 }
 
 interface userIdProp {
@@ -96,8 +96,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGameCopy.gameState[i].highlighted = false;
       }
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
-      dbGameCopy.lastMove = [];
-      dbGameCopy.lastMove.push(activeSquare);
+      dbGameCopy.lastMoves = [];
+      dbGameCopy.lastMoves.push(activeSquare);
 
       set(dbGameReference, dbGameCopy);
     } else {

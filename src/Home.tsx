@@ -26,7 +26,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
       gameState: dummyGame,
       red: userId,
       blue: "",
-      lastMove: [
+      lastMoves: [
         {
           rank: null,
           position: -1,
