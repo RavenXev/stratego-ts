@@ -25,7 +25,7 @@ const Square: React.FC<SquareProps> = ({
   if (rank == -1) {
     // lakes in the middle
     return (
-      <Center {...SquareTemplateProps} bg="#C4F1F9" color="white">
+      <Center {...SquareTemplateProps} bg="#76E4F7" color="white">
         <BiWater size="50%" />
       </Center>
     );
@@ -56,18 +56,14 @@ const Square: React.FC<SquareProps> = ({
         </Center>
       );
     }
-  }
-
-  if (isPieceDisplayed && rank === 99) {
+  } else if (isPieceDisplayed && rank === 99) {
     // your bombs
     return (
       <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
         <BiBomb size="50%" />
       </Center>
     );
-  }
-
-  if (isPieceDisplayed && rank == 0) {
+  } else if (isPieceDisplayed && rank == 0) {
     // your flag
     return (
       <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">

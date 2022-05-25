@@ -1,7 +1,7 @@
 import React from "react";
-import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
-import { set, ref, push, child } from "firebase/database";
+import { set, ref, push } from "firebase/database";
 import { Flex, Button, Heading } from "@chakra-ui/react";
 import createDummyGame from "../helper-functions/createDummyGame";
 

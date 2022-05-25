@@ -22,7 +22,6 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  console.log(user);
   if (!user) return <div>loading user...</div>;
   return (
     <>
