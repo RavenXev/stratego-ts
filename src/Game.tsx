@@ -90,12 +90,15 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
     let dbGameCopy: dbGameProps = { ...dbGame };
 
+    //clicked on highlighted piece
     if (highlighted === true) {
-      //clicked on highlighted piece
       dbGameCopy.wasLastMoveAttack = false;
       if (dbGameCopy.gameState[position].color != "transparent") {
         dbGameCopy.wasLastMoveAttack = true;
       }
+
+      //Delay the attack somehow here, show the active square and the clicked square temporarily.
+
       dbGameCopy.gameState = captureSquare(
         activeSquare["position"],
         position,
@@ -108,8 +111,10 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       dbGameCopy.lastActivePiece = dbGameCopy.gameState[position];
       dbGameCopy.lastMoves = getLastMove(activeSquare.position, position);
       set(dbGameReference, dbGameCopy);
-    } else {
-      // player did not click on highlighted piece
+    }
+
+    // player did not click on highlighted piece
+    else {
       for (let i = 0; i < 100; i++) {
         dbGameCopy.gameState[i].highlighted = false;
       }

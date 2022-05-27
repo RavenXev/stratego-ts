@@ -107,6 +107,7 @@ const Square: React.FC<SquareProps> = ({
     wasLastMoveAttack == true
   ) {
     // last piece that moved
+
     return (
       <Center
         {...SquareTemplateProps}
