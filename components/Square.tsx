@@ -5,12 +5,12 @@ import {
   BiWater,
   BiFlag,
   BiX,
-  BiXCircle,
   BiChevronDown,
   BiChevronRight,
   BiChevronUp,
   BiChevronLeft,
 } from "react-icons/bi";
+import { FiXSquare } from "react-icons/fi";
 import { ReturnLastMovesProps } from "../helper-functions/getLastMove";
 interface SquareProps {
   piece: Piece;
@@ -18,6 +18,7 @@ interface SquareProps {
   activeSquare?: Piece;
   lastActivePiece?: Piece;
   lastMoves: ReturnLastMovesProps;
+  wasLastMoveAttack: boolean;
   whoseTurn: "red" | "blue";
   handleClick?: () => void;
 }
@@ -32,12 +33,14 @@ const Square: React.FC<SquareProps> = ({
   piece,
   isPieceDisplayed,
   lastActivePiece,
+  wasLastMoveAttack,
   whoseTurn,
   lastMoves,
   activeSquare,
   handleClick,
 }) => {
   let { rank, position, color, highlighted } = piece;
+  const lastMoveColor = whoseTurn == "red" ? "blue" : "red";
 
   if (rank == -1) {
     // lakes in the middle
@@ -47,9 +50,12 @@ const Square: React.FC<SquareProps> = ({
       </Center>
     );
   }
-  if (lastMoves.positions != null && lastMoves.positions.includes(position)) {
+  if (
+    lastMoves.positions != null &&
+    lastMoves.positions.includes(position) &&
+    highlighted == false
+  ) {
     // the arrow path of the last move
-    const lastMoveColor = whoseTurn == "red" ? "blue" : "red";
     switch (lastMoves.direction) {
       case "up":
         return (
@@ -94,28 +100,36 @@ const Square: React.FC<SquareProps> = ({
     }
   }
 
+  if (
+    position == lastActivePiece?.position &&
+    highlighted == false &&
+    isPieceDisplayed == false &&
+    wasLastMoveAttack == true
+  ) {
+    // last piece that moved
+    return (
+      <Center
+        {...SquareTemplateProps}
+        bg={`${color}.500`}
+        color={color === "transparent" ? "gray.600" : "white"}
+      >
+        <FiXSquare size="60%" />
+      </Center>
+    );
+  }
+
   if (!isPieceDisplayed) {
     if (highlighted == true && (color == "red" || color == "blue")) {
       // highlighted enemy piece
       return (
         <Center
           {...SquareTemplateProps}
+          _hover={{ opacity: 0.5 }}
           onClick={handleClick}
           bg={`${color}.200`}
           color={`${color}.700`}
         >
-          <BiX size="90%" />
-        </Center>
-      );
-    } else if (position == lastActivePiece?.position) {
-      // last piece that moved
-      return (
-        <Center
-          {...SquareTemplateProps}
-          bg={`${color}.500`}
-          color={lastActivePiece.color == "transparent" ? "gray.600" : "white"}
-        >
-          <BiXCircle size="90%" />
+          <BiX size="80%" />
         </Center>
       );
     } else {

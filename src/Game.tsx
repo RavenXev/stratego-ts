@@ -18,6 +18,7 @@ interface dbGameProps {
   whoseTurn: "red" | "blue";
   lastMoves: ReturnLastMovesProps;
   lastActivePiece: Piece;
+  wasLastMoveAttack: boolean;
 }
 
 interface userIdProp {
@@ -91,6 +92,10 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
     if (highlighted === true) {
       //clicked on highlighted piece
+      dbGameCopy.wasLastMoveAttack = false;
+      if (dbGameCopy.gameState[position].color != "transparent") {
+        dbGameCopy.wasLastMoveAttack = true;
+      }
       dbGameCopy.gameState = captureSquare(
         activeSquare["position"],
         position,
@@ -175,6 +180,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                   lastMoves={dbGame.lastMoves}
                   whoseTurn={dbGame.whoseTurn}
                   isPieceDisplayed={isPieceDisplayed(piece)}
+                  wasLastMoveAttack={dbGame.wasLastMoveAttack}
                   handleClick={() => clickPiece(piece)}
                 />
               );

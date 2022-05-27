@@ -40,6 +40,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
         color: "transparent",
         highlighted: false,
       },
+      wasLastMoveAttack: false,
     });
   };
 
