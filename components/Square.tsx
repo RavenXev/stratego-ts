@@ -103,7 +103,7 @@ const Square: React.FC<SquareProps> = ({
   if (
     position == lastActivePiece?.position &&
     highlighted == false &&
-    isPieceDisplayed == false &&
+    (isPieceDisplayed == false || color == "transparent") &&
     wasLastMoveAttack == true
   ) {
     // last piece that moved
@@ -111,7 +111,7 @@ const Square: React.FC<SquareProps> = ({
       <Center
         {...SquareTemplateProps}
         bg={`${color}.500`}
-        color={color === "transparent" ? "gray.600" : "white"}
+        color={color == "transparent" ? "gray.600" : "white"}
       >
         <FiXSquare size="60%" />
       </Center>
