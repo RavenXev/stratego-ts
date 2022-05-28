@@ -159,8 +159,13 @@ const Square: React.FC<SquareProps> = ({
         <BiFlag size="50%" />
       </Center>
     );
+  } else if (isPieceDisplayed && highlighted == false && rank == null) {
+    return (
+      <Center {...SquareTemplateProps} bg={"transparent"}>
+        <GridItem fontSize="lg" fontWeight="bold"></GridItem>
+      </Center>
+    );
   }
-
   //your movable pieces and yellow highlights
   return (
     <Center
