@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Piece from "../helper-functions/Piece";
 import Square from "../components/Square";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
+import makeAttackReport from "../helper-functions/makeAttackReport";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
@@ -11,7 +12,7 @@ import { Center, Grid, Alert, VStack } from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
 } from "../helper-functions/getLastMove";
-interface dbGameProps {
+export interface dbGameProps {
   red: string;
   blue: string;
   gameState: Piece[];
@@ -19,6 +20,7 @@ interface dbGameProps {
   lastMoves: ReturnLastMovesProps;
   lastActivePiece: Piece;
   wasLastMoveAttack: boolean;
+  lastAttack: Piece[];
 }
 
 interface userIdProp {
@@ -93,28 +95,30 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     //clicked on highlighted piece
     if (highlighted === true) {
       dbGameCopy.wasLastMoveAttack = false;
-      if (dbGameCopy.gameState[position].color != "transparent") {
+      dbGameCopy.lastAttack = [];
+      if (rank != null) {
         dbGameCopy.wasLastMoveAttack = true;
+        dbGameCopy.lastAttack = [activeSquare, { ...piece }];
       }
-
       //Delay the attack somehow here, show the active square and the clicked square temporarily.
-
+      //spread a new list to the database to temporarily show the active attack
       dbGameCopy.gameState = captureSquare(
         activeSquare["position"],
         position,
-        dbGame.gameState
+        dbGameCopy.gameState
       );
       for (let i = 0; i < 100; i++) {
         dbGameCopy.gameState[i].highlighted = false;
       }
+
       dbGameCopy.whoseTurn = dbGameCopy.whoseTurn === "red" ? "blue" : "red";
-      dbGameCopy.lastActivePiece = dbGameCopy.gameState[position];
+      dbGameCopy.lastActivePiece = piece;
       dbGameCopy.lastMoves = getLastMove(activeSquare.position, position);
       set(dbGameReference, dbGameCopy);
     }
 
     // player did not click on highlighted piece
-    else {
+    else if (highlighted == false) {
       for (let i = 0; i < 100; i++) {
         dbGameCopy.gameState[i].highlighted = false;
       }
@@ -133,12 +137,12 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       for (const i of availableMoves) {
         dbGameCopy.gameState[i].highlighted = true;
       }
+      setActiveSquare({ ...piece });
       setLocalGameState(dbGameCopy.gameState);
-      setActiveSquare(dbGameCopy.gameState[position]);
     }
   };
 
-  const isPieceDisplayed = (piece: Piece) => {
+  function isPieceDisplayed(piece: Piece): boolean {
     if (dbGame != null) {
       if (piece.rank == null || piece.rank == -1) {
         return true;
@@ -151,7 +155,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       }
     }
     return false;
-  };
+  }
 
   if (!dbGame || !localGameState) return <div> waiting ... </div>;
   if (!dbGame.blue || !dbGame.red) return <div>no second player!</div>;
@@ -160,15 +164,24 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     <>
       <Center w="100vw" h="100vh">
         <VStack>
-          <Alert
-            status={dbGame[dbGame.whoseTurn] == userId ? "success" : "warning"}
-            variant="top-accent"
-            color="gray.600"
-          >
-            {dbGame[dbGame.whoseTurn] == userId
-              ? "It is your turn!"
-              : "Waiting for opponent..."}
-          </Alert>
+          {!dbGame.wasLastMoveAttack && (
+            <Alert
+              status={
+                dbGame[dbGame.whoseTurn] == userId ? "success" : "warning"
+              }
+              variant="subtle"
+              color="gray.800"
+            >
+              {dbGame[dbGame.whoseTurn] == userId
+                ? "It is your turn!"
+                : "Waiting for opponent..."}
+            </Alert>
+          )}
+          {dbGame.wasLastMoveAttack && (
+            <Alert bg={"gray.300"} color="gray.800">
+              {makeAttackReport(dbGame, userId)}
+            </Alert>
+          )}
           <Grid
             templateColumns="repeat(10,50px)"
             templateRows="repeat(10, 50px)"
