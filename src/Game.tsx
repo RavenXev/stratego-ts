@@ -22,7 +22,6 @@ export interface dbGameProps {
   wasLastMoveAttack: boolean;
   lastAttack: Piece[];
 }
-
 interface userIdProp {
   userId: string;
 }
@@ -163,7 +162,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   return (
     <>
       <Center w="100vw" h="100vh">
-        <VStack>
+        <VStack w={["100%", null, "80%", "75%", "50%", "40%"]}>
           {!dbGame.wasLastMoveAttack && (
             <Alert
               status={
@@ -183,8 +182,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             </Alert>
           )}
           <Grid
-            templateColumns="repeat(10,50px)"
-            templateRows="repeat(10, 50px)"
+            templateColumns="repeat(10,1fr)"
+            templateRows="repeat(10, 1fr)"
             gap="1px"
             opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
           >
