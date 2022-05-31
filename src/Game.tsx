@@ -162,7 +162,10 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   return (
     <>
       <Center w="100vw" h="100vh">
-        <VStack w={["100%", null, "80%", "75%", "50%", "40%"]}>
+        <VStack
+          w={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
+          maxH="100vh"
+        >
           {!dbGame.wasLastMoveAttack && (
             <Alert
               status={
@@ -170,6 +173,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               }
               variant="subtle"
               color="gray.800"
+              maxW="100%"
             >
               {dbGame[dbGame.whoseTurn] == userId
                 ? "It is your turn!"
@@ -177,13 +181,15 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             </Alert>
           )}
           {dbGame.wasLastMoveAttack && (
-            <Alert bg={"gray.300"} color="gray.800">
+            <Alert bg={"gray.300"} color="gray.800" maxW="100%">
               {makeAttackReport(dbGame, userId)}
             </Alert>
           )}
           <Grid
+            h={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
+            maxW="100vw"
             templateColumns="repeat(10,1fr)"
-            templateRows="repeat(10, 1fr)"
+            templateRows="repeat(10,1fr)"
             gap="1px"
             opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
           >
