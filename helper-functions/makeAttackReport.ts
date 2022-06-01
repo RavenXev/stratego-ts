@@ -2,7 +2,7 @@ import { Val } from "react-firebase-hooks/database/dist/database/types";
 import { dbGameProps } from "../src/Game";
 
 export default function makeAttackReport(
-  dbGame: Val<dbGameProps, "", ""> | undefined,
+  dbGame: dbGameProps,
   userId: string
 ): string {
   if (

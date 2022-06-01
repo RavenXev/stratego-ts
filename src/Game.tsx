@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Piece from "../helper-functions/Piece";
 import Square from "../components/Square";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
-import makeAttackReport from "../helper-functions/makeAttackReport";
+import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
@@ -29,8 +29,7 @@ interface userIdProp {
 const Game: React.FC<userIdProp> = ({ userId }) => {
   const { id: gameId } = useParams();
   const dbGameReference = ref(database, `games/${gameId}`);
-  const [dbGame, dbGameLoading, dbGameError] =
-    useObjectVal<dbGameProps>(dbGameReference);
+  const [dbGame] = useObjectVal<dbGameProps>(dbGameReference);
   const [localGameState, setLocalGameState] = useState<Piece[]>();
   const [activeSquare, setActiveSquare] = useState<Piece>({
     rank: null,
@@ -166,25 +165,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           w={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
           maxH="100vh"
         >
-          {!dbGame.wasLastMoveAttack && (
-            <Alert
-              status={
-                dbGame[dbGame.whoseTurn] == userId ? "success" : "warning"
-              }
-              variant="subtle"
-              color="gray.800"
-              maxW="100%"
-            >
-              {dbGame[dbGame.whoseTurn] == userId
-                ? "It is your turn!"
-                : "Waiting for opponent..."}
-            </Alert>
-          )}
-          {dbGame.wasLastMoveAttack && (
-            <Alert bg={"gray.300"} color="gray.800" maxW="100%">
-              {makeAttackReport(dbGame, userId)}
-            </Alert>
-          )}
+          <TurnMessage dbGame={dbGame} userId={userId} />
           <Grid
             h={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
             maxW="100vw"
