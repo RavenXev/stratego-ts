@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
 import { ref, set, onDisconnect } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
-import { Center, Grid, Alert, VStack } from "@chakra-ui/react";
+import { Center, Grid, VStack } from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
 } from "../helper-functions/getLastMove";
@@ -21,6 +21,8 @@ export interface dbGameProps {
   lastActivePiece: Piece;
   wasLastMoveAttack: boolean;
   lastAttack: Piece[];
+  isRedReady: boolean;
+  isBlueReady: boolean;
 }
 interface userIdProp {
   userId: string;

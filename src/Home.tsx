@@ -42,6 +42,8 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
       },
       wasLastMoveAttack: false,
       lastAttack: [],
+      isBlueReady: false,
+      isRedReady: false,
     });
   };
 

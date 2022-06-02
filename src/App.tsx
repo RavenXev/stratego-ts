@@ -5,6 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, set, onDisconnect } from "firebase/database";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Game from "./Game";
+import SetupPage from "../components/SetupPage";
 import Home from "./Home";
 
 const App: React.FC = () => {
@@ -27,7 +28,7 @@ const App: React.FC = () => {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Home userId={user.uid} />} />
+          <Route path="/" element={<SetupPage />} />
           <Route path="/games/:id" element={<Game userId={user.uid} />} />
         </Routes>
       </Router>
