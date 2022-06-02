@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Game from "./Game";
 import SetupPage from "../components/SetupPage";
 import Home from "./Home";
+import createDummyGame from "../helper-functions/createDummyGame";
 
 const App: React.FC = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -28,7 +29,10 @@ const App: React.FC = () => {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<SetupPage />} />
+          <Route
+            path="/"
+            element={<SetupPage gameState={createDummyGame()} />}
+          />
           <Route path="/games/:id" element={<Game userId={user.uid} />} />
         </Routes>
       </Router>
