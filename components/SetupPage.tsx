@@ -7,7 +7,6 @@ import {
   useSensors,
   PointerSensor,
   KeyboardSensor,
-  TouchSensor,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -17,10 +16,18 @@ import {
   useSortable,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import createDummyGame from "../helper-functions/createDummyGame";
-import { Button, Center, Grid, GridItem, position } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertTitle,
+  Button,
+  Center,
+  Grid,
+  GridItem,
+  Spinner,
+} from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
+import { dbGameProps } from "../src/Game";
 
 interface SortableSquareProps {
   id: number;
@@ -28,7 +35,8 @@ interface SortableSquareProps {
 }
 
 interface SetupPageProps {
-  gameState: Piece[];
+  dbGame: dbGameProps;
+  userId: string;
 }
 
 const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
@@ -97,17 +105,33 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
       {...listeners}
     >
       <GridItem fontSize="lg" fontWeight="bold" color="white">
-        {gameState[id - 1].rank}
+        {rank}
       </GridItem>
     </Center>
   );
 };
 
-const SetupPage: React.FC<SetupPageProps> = ({ gameState }) => {
-  const [curOrder, setCurOrder] = useState([
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-  ]);
+const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId }) => {
+  let defaultArray: number[] = [];
+
+  if (dbGame.red == userId) {
+    defaultArray = [
+      61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+      79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
+      97, 98, 99, 100,
+    ];
+  }
+
+  if (dbGame.blue == userId) {
+    defaultArray = [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+      40,
+    ];
+  }
+
+  const [curOrder, setCurOrder] = useState(defaultArray);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -127,11 +151,25 @@ const SetupPage: React.FC<SetupPageProps> = ({ gameState }) => {
     }
   }
 
+  function waitingMessage(): string {
+    if (
+      (dbGame.red == userId && dbGame.blue == "") ||
+      (dbGame.blue == userId && dbGame.red == "")
+    ) {
+      return "Waiting for opponent to join...";
+    } else if (
+      (dbGame.red == userId && dbGame.isBlueReady == false) ||
+      (dbGame.blue == userId && dbGame.isRedReady == false)
+    ) {
+      return "Your opponent is setting up their pieces...";
+    } else return "error";
+  }
+
   const handleClickSaveState = () => {
     console.log(curOrder);
     console.log(
       curOrder.map((position, index) => {
-        return { ...gameState[position - 1], position: index };
+        return { ...dbGame.gameState[position - 1], position: index };
       })
     );
   };
@@ -147,22 +185,39 @@ const SetupPage: React.FC<SetupPageProps> = ({ gameState }) => {
           <Grid
             maxW="100vw"
             templateColumns="repeat(10,1fr)"
-            templateRows="repeat(4,1fr)"
+            templateRows="repeat(6,1fr)"
             gap="1px"
           >
+            <GridItem rowSpan={2} colSpan={10}>
+              <Alert
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="100%"
+                bg={"gray.300"}
+              >
+                <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
+                <AlertTitle fontSize="lg">{waitingMessage()}</AlertTitle>
+              </Alert>
+            </GridItem>
+
             {curOrder.map((position) => {
               return (
                 <SortableSquare
                   key={position}
                   id={position}
-                  gameState={gameState}
+                  gameState={dbGame.gameState}
                 />
               );
             })}
           </Grid>
         </SortableContext>
       </DndContext>
-      <Button onClick={handleClickSaveState}> Save State </Button>
+      <Button onClick={handleClickSaveState} colorScheme="whatsapp">
+        Ready!
+      </Button>
     </>
   );
 };

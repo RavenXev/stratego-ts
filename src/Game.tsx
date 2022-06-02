@@ -12,6 +12,7 @@ import { Center, Grid, VStack } from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
 } from "../helper-functions/getLastMove";
+import SetupPage from "../components/SetupPage";
 export interface dbGameProps {
   red: string;
   blue: string;
@@ -159,7 +160,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   }
 
   if (!dbGame || !localGameState) return <div> waiting ... </div>;
-  if (!dbGame.blue || !dbGame.red) return <div>no second player!</div>;
 
   return (
     <>
@@ -168,53 +168,60 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           w={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
           maxH="100vh"
         >
-          <TurnMessage dbGame={dbGame} userId={userId} />
-          <Grid
-            h={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
-            maxW="100vw"
-            templateColumns="repeat(10,1fr)"
-            templateRows="repeat(10,1fr)"
-            gap="1px"
-            opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
-          >
-            {dbGame.red == userId &&
-              localGameState.map((piece: Piece) => {
-                return (
-                  <Square
-                    key={piece.position}
-                    piece={piece}
-                    activeSquare={activeSquare}
-                    lastActivePiece={dbGame.lastActivePiece}
-                    lastMoves={dbGame.lastMoves}
-                    whoseTurn={dbGame.whoseTurn}
-                    isPieceDisplayed={isPieceDisplayed(piece)}
-                    wasLastMoveAttack={dbGame.wasLastMoveAttack}
-                    handleClick={() => clickPiece(piece)}
-                    isBlue={false}
-                  />
-                );
-              })}
+          {(dbGame.isBlueReady == false || dbGame.isRedReady == false) && (
+            <SetupPage dbGame={dbGame} userId={userId} />
+          )}
+          {dbGame.isBlueReady && dbGame.isRedReady && (
+            <>
+              <TurnMessage dbGame={dbGame} userId={userId} />
+              <Grid
+                h={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
+                maxW="100vw"
+                templateColumns="repeat(10,1fr)"
+                templateRows="repeat(10,1fr)"
+                gap="1px"
+                opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
+              >
+                {dbGame.red == userId &&
+                  localGameState.map((piece: Piece) => {
+                    return (
+                      <Square
+                        key={piece.position}
+                        piece={piece}
+                        activeSquare={activeSquare}
+                        lastActivePiece={dbGame.lastActivePiece}
+                        lastMoves={dbGame.lastMoves}
+                        whoseTurn={dbGame.whoseTurn}
+                        isPieceDisplayed={isPieceDisplayed(piece)}
+                        wasLastMoveAttack={dbGame.wasLastMoveAttack}
+                        handleClick={() => clickPiece(piece)}
+                        isBlue={false}
+                      />
+                    );
+                  })}
 
-            {dbGame.blue == userId &&
-              localGameState
-                .map((piece: Piece) => {
-                  return (
-                    <Square
-                      key={piece.position}
-                      piece={piece}
-                      activeSquare={activeSquare}
-                      lastActivePiece={dbGame.lastActivePiece}
-                      lastMoves={dbGame.lastMoves}
-                      whoseTurn={dbGame.whoseTurn}
-                      isPieceDisplayed={isPieceDisplayed(piece)}
-                      wasLastMoveAttack={dbGame.wasLastMoveAttack}
-                      handleClick={() => clickPiece(piece)}
-                      isBlue={true}
-                    />
-                  );
-                })
-                .reverse()}
-          </Grid>
+                {dbGame.blue == userId &&
+                  localGameState
+                    .map((piece: Piece) => {
+                      return (
+                        <Square
+                          key={piece.position}
+                          piece={piece}
+                          activeSquare={activeSquare}
+                          lastActivePiece={dbGame.lastActivePiece}
+                          lastMoves={dbGame.lastMoves}
+                          whoseTurn={dbGame.whoseTurn}
+                          isPieceDisplayed={isPieceDisplayed(piece)}
+                          wasLastMoveAttack={dbGame.wasLastMoveAttack}
+                          handleClick={() => clickPiece(piece)}
+                          isBlue={true}
+                        />
+                      );
+                    })
+                    .reverse()}
+              </Grid>
+            </>
+          )}
         </VStack>
       </Center>
     </>
