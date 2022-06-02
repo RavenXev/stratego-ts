@@ -29,10 +29,7 @@ const App: React.FC = () => {
     <>
       <Router>
         <Routes>
-          <Route
-            path="/"
-            element={<SetupPage gameState={createDummyGame()} />}
-          />
+          <Route path="/" element={<Home userId={user.uid} />} />
           <Route path="/games/:id" element={<Game userId={user.uid} />} />
         </Routes>
       </Router>

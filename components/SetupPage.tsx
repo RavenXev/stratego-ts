@@ -145,10 +145,9 @@ const SetupPage: React.FC<SetupPageProps> = ({ gameState }) => {
       >
         <SortableContext items={curOrder} strategy={rectSwappingStrategy}>
           <Grid
-            h={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
             maxW="100vw"
             templateColumns="repeat(10,1fr)"
-            templateRows="repeat(10,1fr)"
+            templateRows="repeat(4,1fr)"
             gap="1px"
           >
             {curOrder.map((position) => {

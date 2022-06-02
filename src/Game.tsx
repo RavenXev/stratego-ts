@@ -119,6 +119,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
     // player did not click on highlighted piece
     else if (highlighted == false) {
+      console.log(piece);
       for (let i = 0; i < 100; i++) {
         dbGameCopy.gameState[i].highlighted = false;
       }
@@ -176,21 +177,43 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             gap="1px"
             opacity={dbGame[dbGame.whoseTurn] == userId ? 1.0 : 0.6}
           >
-            {localGameState.map((piece: Piece) => {
-              return (
-                <Square
-                  key={piece.position}
-                  piece={piece}
-                  activeSquare={activeSquare}
-                  lastActivePiece={dbGame.lastActivePiece}
-                  lastMoves={dbGame.lastMoves}
-                  whoseTurn={dbGame.whoseTurn}
-                  isPieceDisplayed={isPieceDisplayed(piece)}
-                  wasLastMoveAttack={dbGame.wasLastMoveAttack}
-                  handleClick={() => clickPiece(piece)}
-                />
-              );
-            })}
+            {dbGame.red == userId &&
+              localGameState.map((piece: Piece) => {
+                return (
+                  <Square
+                    key={piece.position}
+                    piece={piece}
+                    activeSquare={activeSquare}
+                    lastActivePiece={dbGame.lastActivePiece}
+                    lastMoves={dbGame.lastMoves}
+                    whoseTurn={dbGame.whoseTurn}
+                    isPieceDisplayed={isPieceDisplayed(piece)}
+                    wasLastMoveAttack={dbGame.wasLastMoveAttack}
+                    handleClick={() => clickPiece(piece)}
+                    isBlue={false}
+                  />
+                );
+              })}
+
+            {dbGame.blue == userId &&
+              localGameState
+                .map((piece: Piece) => {
+                  return (
+                    <Square
+                      key={piece.position}
+                      piece={piece}
+                      activeSquare={activeSquare}
+                      lastActivePiece={dbGame.lastActivePiece}
+                      lastMoves={dbGame.lastMoves}
+                      whoseTurn={dbGame.whoseTurn}
+                      isPieceDisplayed={isPieceDisplayed(piece)}
+                      wasLastMoveAttack={dbGame.wasLastMoveAttack}
+                      handleClick={() => clickPiece(piece)}
+                      isBlue={true}
+                    />
+                  );
+                })
+                .reverse()}
           </Grid>
         </VStack>
       </Center>

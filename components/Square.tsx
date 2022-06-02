@@ -21,6 +21,7 @@ interface SquareProps {
   wasLastMoveAttack: boolean;
   whoseTurn: "red" | "blue";
   handleClick?: () => void;
+  isBlue: boolean;
 }
 
 const SquareTemplateProps = {
@@ -38,6 +39,7 @@ const Square: React.FC<SquareProps> = ({
   lastMoves,
   activeSquare,
   handleClick,
+  isBlue,
 }) => {
   let { rank, position, color, highlighted } = piece;
   const lastMoveColor = whoseTurn == "red" ? "blue" : "red";
@@ -56,7 +58,26 @@ const Square: React.FC<SquareProps> = ({
     highlighted == false
   ) {
     // the arrow path of the last move
-    switch (lastMoves.direction) {
+
+    let arrowDirection = lastMoves.direction;
+
+    if (isBlue == true) {
+      switch (arrowDirection) {
+        case "up":
+          arrowDirection = "down";
+          break;
+        case "down":
+          arrowDirection = "up";
+          break;
+        case "right":
+          arrowDirection = "left";
+          break;
+        case "left":
+          arrowDirection = "right";
+          break;
+      }
+    }
+    switch (arrowDirection) {
       case "up":
         return (
           <Center
