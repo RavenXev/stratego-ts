@@ -37,6 +37,7 @@ interface SortableSquareProps {
 interface SetupPageProps {
   dbGame: dbGameProps;
   userId: string;
+  saveState: (dbGame: dbGameProps) => void;
 }
 
 const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
@@ -111,9 +112,8 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
   );
 };
 
-const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId }) => {
+const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
   let defaultArray: number[] = [];
-
   if (dbGame.red == userId) {
     defaultArray = [
       61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
@@ -121,7 +121,6 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId }) => {
       97, 98, 99, 100,
     ];
   }
-
   if (dbGame.blue == userId) {
     defaultArray = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
@@ -130,7 +129,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId }) => {
     ];
   }
 
-  const [curOrder, setCurOrder] = useState(defaultArray);
+  const [curOrder, setCurOrder] = useState<number[]>(defaultArray);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -166,12 +165,29 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId }) => {
   }
 
   const handleClickSaveState = () => {
-    console.log(curOrder);
-    console.log(
-      curOrder.map((position, index) => {
-        return { ...dbGame.gameState[position - 1], position: index };
-      })
-    );
+    let newGame = { ...dbGame };
+
+    if (dbGame.red == userId) {
+      const newState = curOrder.map((position, index) => {
+        return { ...dbGame.gameState[position - 1], position: index + 60 };
+      });
+
+      newGame.setups.red = newState;
+      newGame.isRedReady = true;
+    }
+
+    if (dbGame.blue == userId) {
+      const newState = curOrder
+        .map((position, index) => {
+          return { ...dbGame.gameState[position - 1], position: 39 - index };
+        })
+        .reverse();
+
+      newGame.setups.blue = newState;
+      newGame.isBlueReady = true;
+    }
+
+    saveState(newGame);
   };
 
   return (

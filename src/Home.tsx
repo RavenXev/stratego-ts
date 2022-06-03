@@ -44,6 +44,24 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
       lastAttack: [],
       isBlueReady: false,
       isRedReady: false,
+      setups: {
+        red: [
+          {
+            rank: null,
+            position: -1,
+            color: "transparent",
+            highlighted: false,
+          },
+        ],
+        blue: [
+          {
+            rank: null,
+            position: -1,
+            color: "transparent",
+            highlighted: false,
+          },
+        ],
+      },
     });
   };
 

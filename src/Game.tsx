@@ -6,7 +6,7 @@ import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
 import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect } from "firebase/database";
+import { ref, set, onDisconnect, update } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { Center, Grid, VStack } from "@chakra-ui/react";
 import getLastMove, {
@@ -24,6 +24,7 @@ export interface dbGameProps {
   lastAttack: Piece[];
   isRedReady: boolean;
   isBlueReady: boolean;
+  setups: { red: Piece[]; blue: Piece[] };
 }
 interface userIdProp {
   userId: string;
@@ -120,7 +121,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
     // player did not click on highlighted piece
     else if (highlighted == false) {
-      console.log(piece);
       for (let i = 0; i < 100; i++) {
         dbGameCopy.gameState[i].highlighted = false;
       }
@@ -169,7 +169,20 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           maxH="100vh"
         >
           {(dbGame.isBlueReady == false || dbGame.isRedReady == false) && (
-            <SetupPage dbGame={dbGame} userId={userId} />
+            <SetupPage
+              dbGame={dbGame}
+              userId={userId}
+              saveState={(newGame: dbGameProps) => {
+                if (
+                  newGame.setups.red.length == 40 &&
+                  newGame.setups.blue.length == 40
+                ) {
+                  newGame.gameState.splice(60, 40, ...newGame.setups.red);
+                  newGame.gameState.splice(0, 40, ...newGame.setups.blue);
+                }
+                set(dbGameReference, newGame);
+              }}
+            />
           )}
           {dbGame.isBlueReady && dbGame.isRedReady && (
             <>
