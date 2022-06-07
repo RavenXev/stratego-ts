@@ -16,6 +16,7 @@ const TurnMessage: React.FC<MessageProp> = ({ dbGame, userId }) => {
           status={dbGame[dbGame.whoseTurn] == userId ? "success" : "warning"}
           variant="subtle"
           color="gray.800"
+          fontSize="lg"
           maxW="100%"
         >
           {dbGame[dbGame.whoseTurn] == userId

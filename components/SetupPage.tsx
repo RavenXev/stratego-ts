@@ -18,6 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 import {
   Alert,
+  AlertIcon,
   AlertTitle,
   Button,
   Center,
@@ -26,7 +27,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
-import { BiBomb, BiFlag } from "react-icons/bi";
+import { BiBomb, BiCheckCircle, BiFlag } from "react-icons/bi";
 import { dbGameProps } from "../src/Game";
 
 interface SortableSquareProps {
@@ -150,19 +151,55 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
     }
   }
 
-  function waitingMessage(): string {
+  const WaitMessageComponent = () => {
     if (
       (dbGame.red == userId && dbGame.blue == "") ||
       (dbGame.blue == userId && dbGame.red == "")
     ) {
-      return "Waiting for opponent to join...";
+      return (
+        <>
+          <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
+
+          <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
+            Waiting for opponent to join...
+          </AlertTitle>
+        </>
+      );
     } else if (
       (dbGame.red == userId && dbGame.isBlueReady == false) ||
       (dbGame.blue == userId && dbGame.isRedReady == false)
     ) {
-      return "Your opponent is setting up their pieces...";
-    } else return "error";
-  }
+      return (
+        <>
+          <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
+
+          <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
+            Your opponent is setting up their pieces...
+          </AlertTitle>
+        </>
+      );
+    } else if (
+      (dbGame.isRedReady == true && dbGame.blue == userId) ||
+      (dbGame.isBlueReady == true && dbGame.red == userId)
+    ) {
+      return (
+        <>
+          {(dbGame.isRedReady == true && dbGame.blue == userId) ||
+          (dbGame.isBlueReady == true && dbGame.red == userId) ? (
+            <AlertIcon boxSize="2em" mt={3} mb={6} />
+          ) : (
+            <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
+          )}
+
+          <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
+            Your opponent is ready!
+          </AlertTitle>
+        </>
+      );
+    }
+
+    return <AlertTitle>An error has occurred</AlertTitle>;
+  };
 
   const handleClickSaveState = () => {
     let newGame = { ...dbGame };
@@ -212,10 +249,15 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
                 justifyContent="center"
                 textAlign="center"
                 height="100%"
-                bg={"gray.300"}
+                status="success"
+                bg={
+                  (dbGame.isRedReady == true && dbGame.blue == userId) ||
+                  (dbGame.isBlueReady == true && dbGame.red == userId)
+                    ? "green.200"
+                    : "gray.300"
+                }
               >
-                <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
-                <AlertTitle fontSize="lg">{waitingMessage()}</AlertTitle>
+                <WaitMessageComponent />
               </Alert>
             </GridItem>
 
@@ -231,8 +273,13 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
           </Grid>
         </SortableContext>
       </DndContext>
-      <Button onClick={handleClickSaveState} colorScheme="whatsapp">
-        Ready!
+      <Button onClick={handleClickSaveState} colorScheme="whatsapp" size="lg">
+        {dbGame.red == userId && dbGame.isRedReady
+          ? "Update Formation"
+          : "Ready!"}
+        {dbGame.blue == userId && dbGame.isBlueReady
+          ? "Update Formation"
+          : "Ready!"}
       </Button>
     </>
   );
