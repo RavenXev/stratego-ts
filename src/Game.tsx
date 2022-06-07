@@ -8,11 +8,21 @@ import { useParams } from "react-router-dom";
 import { database } from "../backend/config";
 import { ref, set, onDisconnect, update } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
-import { Center, Grid, VStack } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Center,
+  Grid,
+  IconButton,
+  VStack,
+} from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
 } from "../helper-functions/getLastMove";
 import SetupPage from "../components/SetupPage";
+import { BiHome } from "react-icons/bi";
 export interface dbGameProps {
   red: string;
   blue: string;
@@ -60,11 +70,19 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       });
 
       //set onDisconnect update object
-      let currentPlayerUpdateObject: { red?: string; blue?: string } = {};
+      let currentPlayerUpdateObject: {
+        red?: string;
+        blue?: string;
+        isRedReady?: boolean;
+        isBlueReady?: boolean;
+      } = {};
+
       if (dbGame.red == userId) {
         currentPlayerUpdateObject["red"] = "";
+        currentPlayerUpdateObject["isRedReady"] = false;
       } else if (dbGame.blue == userId) {
         currentPlayerUpdateObject["blue"] = "";
+        currentPlayerUpdateObject["isBlueReady"] = false;
       }
       //onDisconnect logic
       const onDisconnectRef = onDisconnect(dbGameReference);
@@ -166,7 +184,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       <Center w="100vw" h="100vh">
         <VStack
           w={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
-          maxH="100vh"
+          maxH="90vh"
         >
           {(dbGame.isBlueReady == false || dbGame.isRedReady == false) && (
             <SetupPage
@@ -184,6 +202,25 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               }}
             />
           )}
+
+          {dbGame.isBlueReady &&
+            dbGame.isRedReady &&
+            ((dbGame.red == userId && dbGame.blue == "") ||
+              (dbGame.blue == userId && dbGame.red == "")) && (
+              <Alert status="error">
+                <AlertTitle>Your opponent has disconnected! </AlertTitle>
+                <AlertIcon /> Send them this game code or click to go back to
+                home.{" "}
+                <IconButton
+                  aria-label="Home button"
+                  colorScheme="red"
+                  icon={<BiHome />}
+                  size="sm"
+                  ml="auto"
+                />
+              </Alert>
+            )}
+
           {dbGame.isBlueReady && dbGame.isRedReady && (
             <>
               <TurnMessage dbGame={dbGame} userId={userId} />

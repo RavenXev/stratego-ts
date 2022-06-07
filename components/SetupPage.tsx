@@ -159,7 +159,6 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
       return (
         <>
           <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
-
           <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
             Waiting for opponent to join...
           </AlertTitle>
@@ -274,10 +273,8 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
         </SortableContext>
       </DndContext>
       <Button onClick={handleClickSaveState} colorScheme="whatsapp" size="lg">
-        {dbGame.red == userId && dbGame.isRedReady
-          ? "Update Formation"
-          : "Ready!"}
-        {dbGame.blue == userId && dbGame.isBlueReady
+        {(dbGame.red == userId && dbGame.isRedReady) ||
+        (dbGame.blue == userId && dbGame.isBlueReady)
           ? "Update Formation"
           : "Ready!"}
       </Button>
