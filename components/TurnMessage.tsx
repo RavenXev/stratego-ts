@@ -21,7 +21,7 @@ const TurnMessage: React.FC<MessageProp> = ({ dbGame, userId }) => {
         >
           {dbGame[dbGame.whoseTurn] == userId
             ? "It is your turn!"
-            : "Waiting for opponent..."}
+            : "Waiting for opponent's move..."}
         </Alert>
       )}
       {dbGame.wasLastMoveAttack && (

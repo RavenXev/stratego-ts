@@ -5,9 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, set, onDisconnect } from "firebase/database";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Game from "./Game";
-import SetupPage from "../components/SetupPage";
 import Home from "./Home";
-import createDummyGame from "../helper-functions/createDummyGame";
 
 const App: React.FC = () => {
   const [user, loading, error] = useAuthState(auth);

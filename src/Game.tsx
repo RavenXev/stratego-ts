@@ -12,7 +12,6 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  Button,
   Center,
   Grid,
   IconButton,
@@ -34,6 +33,8 @@ export interface dbGameProps {
   lastAttack: Piece[];
   isRedReady: boolean;
   isBlueReady: boolean;
+  isGameStarted: boolean;
+  isGameOver: boolean;
   setups: { red: Piece[]; blue: Piece[] };
 }
 interface userIdProp {
@@ -120,6 +121,11 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGameCopy.wasLastMoveAttack = true;
         dbGameCopy.lastAttack = [activeSquare, { ...piece }];
       }
+
+      if (rank == 0) {
+        dbGameCopy.isGameOver = true;
+      }
+
       //Delay the attack somehow here, show the active square and the clicked square temporarily.
       //spread a new list to the database to temporarily show the active attack
       dbGameCopy.gameState = captureSquare(
@@ -186,31 +192,35 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           w={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
           maxH="90vh"
         >
-          {(dbGame.isBlueReady == false || dbGame.isRedReady == false) && (
-            <SetupPage
-              dbGame={dbGame}
-              userId={userId}
-              saveState={(newGame: dbGameProps) => {
-                if (
-                  newGame.setups.red.length == 40 &&
-                  newGame.setups.blue.length == 40
-                ) {
-                  newGame.gameState.splice(60, 40, ...newGame.setups.red);
-                  newGame.gameState.splice(0, 40, ...newGame.setups.blue);
-                }
-                set(dbGameReference, newGame);
-              }}
-            />
-          )}
+          {!dbGame.isGameStarted &&
+            (dbGame.isBlueReady == false || dbGame.isRedReady == false) && (
+              <SetupPage
+                dbGame={dbGame}
+                userId={userId}
+                saveState={(newGame: dbGameProps) => {
+                  if (
+                    newGame.setups.red.length == 40 &&
+                    newGame.setups.blue.length == 40 &&
+                    newGame.isBlueReady &&
+                    newGame.isRedReady
+                  ) {
+                    newGame.gameState.splice(60, 40, ...newGame.setups.red);
+                    newGame.gameState.splice(0, 40, ...newGame.setups.blue);
+                    newGame.isGameStarted = true;
+                  }
+                  set(dbGameReference, newGame);
+                }}
+              />
+            )}
 
-          {dbGame.isBlueReady &&
-            dbGame.isRedReady &&
+          {dbGame.isGameStarted &&
+            !dbGame.isGameOver &&
             ((dbGame.red == userId && dbGame.blue == "") ||
               (dbGame.blue == userId && dbGame.red == "")) && (
               <Alert status="error">
-                <AlertTitle>Your opponent has disconnected! </AlertTitle>
-                <AlertIcon /> Send them this game code or click to go back to
-                home.{" "}
+                <AlertIcon />
+                <AlertTitle>Opponent disconnected! </AlertTitle>
+                Send them this game code or go back to home
                 <IconButton
                   aria-label="Home button"
                   colorScheme="red"
@@ -221,7 +231,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               </Alert>
             )}
 
-          {dbGame.isBlueReady && dbGame.isRedReady && (
+          {dbGame.isGameStarted && !dbGame.isGameOver && (
             <>
               <TurnMessage dbGame={dbGame} userId={userId} />
               <Grid
@@ -272,6 +282,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               </Grid>
             </>
           )}
+
+          {dbGame.isGameOver && <Alert> Game is Over!</Alert>}
         </VStack>
       </Center>
     </>
