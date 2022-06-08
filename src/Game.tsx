@@ -6,7 +6,7 @@ import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
 import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect, update, remove } from "firebase/database";
+import { ref, set, onDisconnect, update, remove, get } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import {
   Alert,
@@ -64,6 +64,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    console.log(dbGame);
+
     if (dbGame != null) {
       //check if there is a blank player
       //set other player to userId
@@ -131,6 +133,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       }
 
       //set onDisconnect update object
+      //onDisconnect logic
+
       let currentPlayerUpdateObject: {
         red?: string;
         blue?: string;
@@ -145,14 +149,24 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         currentPlayerUpdateObject["blue"] = "";
         currentPlayerUpdateObject["isBlueReady"] = false;
       }
-      //onDisconnect logic
       const onDisconnectRef = onDisconnect(dbGameReference);
+
       if (dbGame.red == "" || dbGame.blue == "") {
         onDisconnectRef.remove();
-      } else if (dbGame.red !== "" && dbGame.blue !== "") {
+      } else if (
+        dbGame.red !== "" &&
+        dbGame.blue !== "" &&
+        !dbGame.isGameOver
+      ) {
         onDisconnectRef.cancel();
         onDisconnectRef.update(currentPlayerUpdateObject);
       }
+
+      get(ref(database, `/games/${gameId}`)).then((snapshot) => {
+        if (!snapshot.exists()) {
+          onDisconnectRef.cancel();
+        }
+      });
 
       setLocalGameState(dbGame.gameState);
     }
@@ -400,12 +414,14 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                 loadingText="Rematch..."
                 onClick={() => {
                   if (dbGame.red == userId) {
-                    update(ref(database, `games/${gameId}`), {
+                    set(ref(database, `games/${gameId}`), {
+                      ...dbGame,
                       rematchRed: true,
                     });
                   }
                   if (dbGame.blue == userId) {
-                    update(ref(database, `games/${gameId}`), {
+                    set(ref(database, `games/${gameId}`), {
+                      ...dbGame,
                       rematchBlue: true,
                     });
                   }
@@ -416,7 +432,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               {((dbGame.red == userId && dbGame.rematchBlue) ||
                 (dbGame.blue == userId && dbGame.rematchRed)) && (
                 <Alert status="success">
-                  {" "}
                   You've been challenged to a rematch!
                 </Alert>
               )}

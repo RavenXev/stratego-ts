@@ -23,10 +23,12 @@ import {
   Badge,
   Button,
   Center,
+  Flex,
   Grid,
   GridItem,
   IconButton,
   Spinner,
+  Wrap,
 } from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
@@ -246,23 +248,30 @@ const SetupPage: React.FC<SetupPageProps> = ({
     <>
       {(dbGame.red == "" || dbGame.blue == "") && (
         <Alert>
-          <AlertIcon /> Send the code
-          <Badge ml={2} mr={2}>
-            {gameId}
-          </Badge>
-          to your friend!
-          <Button
-            size="sm"
-            colorScheme="messenger"
-            aria-label="copy game code"
-            rightIcon={<MdContentCopy />}
-            ml="auto"
-            onClick={() => {
-              navigator.clipboard.writeText(`${gameId}`);
-            }}
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            flexWrap="wrap"
+            padding={2}
           >
-            Click here to copy
-          </Button>
+            <AlertIcon mt={2} mb={2} />
+            Copy the code and send it to your friend!
+            <Button
+              size="sm"
+              mt={2}
+              mb={2}
+              variant="outline"
+              colorScheme="blue"
+              aria-label="copy game code"
+              rightIcon={<MdContentCopy />}
+              ml={3}
+              onClick={() => {
+                navigator.clipboard.writeText(`${gameId}`);
+              }}
+            >
+              {gameId}
+            </Button>
+          </Flex>
         </Alert>
       )}
       <DndContext

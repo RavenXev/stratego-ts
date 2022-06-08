@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
-import { set, ref, push, get, child, remove } from "firebase/database";
+import "@fontsource/fascinate-inline";
+import { set, ref, push, get, remove } from "firebase/database";
 import {
   Flex,
   Button,
@@ -95,7 +96,14 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
         rounded="base"
         textAlign="center"
       >
-        <Heading mb={12}> Stratego</Heading>
+        <Heading
+          mb={12}
+          fontSize="6xl"
+          color="gray.700"
+          fontFamily="Fascinate Inline, sans-serif"
+        >
+          Stratejist
+        </Heading>
         <Button
           colorScheme="whatsapp"
           mb={6}
@@ -127,7 +135,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
               if (notFoundError) {
                 setNotFoundError(false);
               }
-              setGameCode(event.target.value);
+              setGameCode(event.target.value.trim());
             }}
           />
           <Button colorScheme="messenger" type="submit" w="100%">
