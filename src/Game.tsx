@@ -245,7 +245,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
   }
 
   if (!localGameState) return <> waiting... </>;
-  else if (!dbGame)
+  else if (!dbGame || !gameId)
     return (
       <Center w="100vw" h="100vh">
         <Flex direction="column" background="gray.100" p={12} rounded="base">
@@ -274,6 +274,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               <SetupPage
                 dbGame={dbGame}
                 userId={userId}
+                gameId={gameId}
                 saveState={(newGame: dbGameProps) => {
                   if (
                     newGame.setups.red.length == 40 &&

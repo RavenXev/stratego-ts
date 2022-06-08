@@ -20,14 +20,17 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Badge,
   Button,
   Center,
   Grid,
   GridItem,
+  IconButton,
   Spinner,
 } from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
+import { MdContentCopy } from "react-icons/md";
 import { dbGameProps } from "../src/Game";
 
 interface SortableSquareProps {
@@ -38,6 +41,7 @@ interface SortableSquareProps {
 interface SetupPageProps {
   dbGame: dbGameProps;
   userId: string;
+  gameId: string;
   saveState: (dbGame: dbGameProps) => void;
 }
 
@@ -113,7 +117,12 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
   );
 };
 
-const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
+const SetupPage: React.FC<SetupPageProps> = ({
+  dbGame,
+  userId,
+  saveState,
+  gameId,
+}) => {
   let defaultArray: number[] = [];
   if (dbGame.red == userId) {
     defaultArray = [
@@ -170,10 +179,17 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
     ) {
       return (
         <>
-          <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
+          <Spinner
+            color="green.500"
+            thickness="4px"
+            size="lg"
+            speed="1s"
+            mt={3}
+            mb={6}
+          />
 
           <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
-            Your opponent is setting up their pieces...
+            Your opponent is setting up their pieces!
           </AlertTitle>
         </>
       );
@@ -228,6 +244,27 @@ const SetupPage: React.FC<SetupPageProps> = ({ dbGame, userId, saveState }) => {
 
   return (
     <>
+      {(dbGame.red == "" || dbGame.blue == "") && (
+        <Alert>
+          <AlertIcon /> Send the code
+          <Badge ml={2} mr={2}>
+            {gameId}
+          </Badge>
+          to your friend!
+          <Button
+            size="sm"
+            colorScheme="messenger"
+            aria-label="copy game code"
+            rightIcon={<MdContentCopy />}
+            ml="auto"
+            onClick={() => {
+              navigator.clipboard.writeText(`${gameId}`);
+            }}
+          >
+            Click here to copy
+          </Button>
+        </Alert>
+      )}
       <DndContext
         onDragEnd={handleDragEnd}
         sensors={sensors}
