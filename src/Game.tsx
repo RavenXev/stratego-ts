@@ -60,12 +60,11 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     color: "transparent",
     highlighted: false,
   });
+  const onDisconnectRef = onDisconnect(dbGameReference);
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.log(dbGame);
-
     if (dbGame != null) {
       //check if there is a blank player
       //set other player to userId
@@ -149,7 +148,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         currentPlayerUpdateObject["blue"] = "";
         currentPlayerUpdateObject["isBlueReady"] = false;
       }
-      const onDisconnectRef = onDisconnect(dbGameReference);
 
       if (dbGame.red == "" || dbGame.blue == "") {
         onDisconnectRef.remove();
@@ -161,12 +159,6 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         onDisconnectRef.cancel();
         onDisconnectRef.update(currentPlayerUpdateObject);
       }
-
-      get(ref(database, `/games/${gameId}`)).then((snapshot) => {
-        if (!snapshot.exists()) {
-          onDisconnectRef.cancel();
-        }
-      });
 
       setLocalGameState(dbGame.gameState);
     }
@@ -268,6 +260,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             colorScheme="red"
             mb={6}
             onClick={() => {
+              onDisconnectRef.cancel();
               navigate(`/`);
             }}
           >
@@ -397,7 +390,9 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                 colorScheme="red"
                 mb={6}
                 onClick={() => {
-                  remove(dbGameReference);
+                  remove(dbGameReference).then(() => {
+                    onDisconnectRef.cancel();
+                  });
                   navigate("/");
                 }}
               >
