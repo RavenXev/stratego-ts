@@ -27,7 +27,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
-import { BiBomb, BiCheckCircle, BiFlag } from "react-icons/bi";
+import { BiBomb, BiFlag } from "react-icons/bi";
 import { dbGameProps } from "../src/Game";
 
 interface SortableSquareProps {

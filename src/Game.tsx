@@ -26,6 +26,7 @@ import getLastMove, {
 } from "../helper-functions/getLastMove";
 import SetupPage from "../components/SetupPage";
 import { BiHome } from "react-icons/bi";
+import createDummyGame from "../helper-functions/createDummyGame";
 export interface dbGameProps {
   red: string;
   blue: string;
@@ -37,8 +38,11 @@ export interface dbGameProps {
   lastAttack: Piece[];
   isRedReady: boolean;
   isBlueReady: boolean;
+  rematchRed: boolean;
+  rematchBlue: boolean;
   isGameStarted: boolean;
   isGameOver: boolean;
+  winner: "red" | "blue" | null;
   setups: { red: Piece[]; blue: Piece[] };
 }
 interface userIdProp {
@@ -75,6 +79,56 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
       set(userRef, {
         currentGame: gameId,
       });
+
+      if (dbGame.rematchBlue == true && dbGame.rematchRed == true) {
+        set(dbGameReference, {
+          whoseTurn: "red",
+          gameState: createDummyGame(),
+          red: dbGame.blue,
+          blue: dbGame.red,
+          lastMoves: [
+            {
+              rank: null,
+              position: -1,
+              color: "transparent",
+              highlighted: false,
+            },
+          ],
+          lastActivePiece: {
+            rank: null,
+            position: -1,
+            color: "transparent",
+            highlighted: false,
+          },
+          wasLastMoveAttack: false,
+          lastAttack: [],
+          isBlueReady: false,
+          isRedReady: false,
+          rematchRed: false,
+          rematchBlue: false,
+          isGameStarted: false,
+          isGameOver: false,
+          winner: null,
+          setups: {
+            red: [
+              {
+                rank: null,
+                position: -1,
+                color: "transparent",
+                highlighted: false,
+              },
+            ],
+            blue: [
+              {
+                rank: null,
+                position: -1,
+                color: "transparent",
+                highlighted: false,
+              },
+            ],
+          },
+        });
+      }
 
       //set onDisconnect update object
       let currentPlayerUpdateObject: {
@@ -130,6 +184,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
 
       if (rank == 0) {
         dbGameCopy.isGameOver = true;
+        dbGameCopy.winner = color == "blue" ? "red" : "blue";
       }
 
       //Delay the attack somehow here, show the active square and the clicked square temporarily.
@@ -189,8 +244,24 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     return false;
   }
 
-  if (!dbGame || !localGameState) return <> waiting... </>;
-
+  if (!localGameState) return <> waiting... </>;
+  else if (!dbGame)
+    return (
+      <Center w="100vw" h="100vh">
+        <Flex direction="column" background="gray.100" p={12} rounded="base">
+          <Text mb={6}> This game no longer exists! </Text>
+          <Button
+            colorScheme="red"
+            mb={6}
+            onClick={() => {
+              navigate(`/`);
+            }}
+          >
+            Back to home
+          </Button>
+        </Flex>
+      </Center>
+    );
   return (
     <>
       <Center w="100vw" h="100vh">
@@ -293,16 +364,22 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             </>
           )}
 
-          {dbGame.isGameOver && (
+          {dbGame.isGameOver && dbGame.winner && (
             <Flex
               direction="column"
               background="gray.100"
-              p={12}
+              p={16}
               rounded="base"
+              textAlign="center"
             >
-              <Heading mb={12}> Stratego</Heading>
+              {dbGame[dbGame.winner] == userId && (
+                <Heading mb={12}> You win!</Heading>
+              )}
+              {dbGame[dbGame.winner] != userId && (
+                <Heading mb={12}> You lost!</Heading>
+              )}
               <Button
-                colorScheme="gray"
+                colorScheme="red"
                 mb={6}
                 onClick={() => {
                   remove(dbGameReference);
@@ -311,7 +388,37 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               >
                 Go back home
               </Button>
-              <Button colorScheme="whatsapp">Rematch?</Button>
+              <Button
+                colorScheme="whatsapp"
+                isLoading={
+                  (dbGame.red == userId && dbGame.rematchRed) ||
+                  (dbGame.blue == userId && dbGame.rematchBlue)
+                    ? true
+                    : undefined
+                }
+                loadingText="Rematch..."
+                onClick={() => {
+                  if (dbGame.red == userId) {
+                    update(ref(database, `games/${gameId}`), {
+                      rematchRed: true,
+                    });
+                  }
+                  if (dbGame.blue == userId) {
+                    update(ref(database, `games/${gameId}`), {
+                      rematchBlue: true,
+                    });
+                  }
+                }}
+              >
+                Rematch?
+              </Button>
+              {((dbGame.red == userId && dbGame.rematchBlue) ||
+                (dbGame.blue == userId && dbGame.rematchRed)) && (
+                <Alert status="success">
+                  {" "}
+                  You've been challenged to a rematch!
+                </Alert>
+              )}
             </Flex>
           )}
         </VStack>

@@ -50,8 +50,11 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
       lastAttack: [],
       isBlueReady: false,
       isRedReady: false,
+      rematchRed: false,
+      rematchBlue: false,
       isGameStarted: false,
       isGameOver: false,
+      winner: null,
       setups: {
         red: [
           {
