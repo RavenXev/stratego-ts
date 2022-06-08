@@ -4,17 +4,21 @@ import Square from "../components/Square";
 import getAvailableMoves from "../helper-functions/getAvailableMoves";
 import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect, update } from "firebase/database";
+import { ref, set, onDisconnect, update, remove } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Button,
   Center,
+  Flex,
   Grid,
+  Heading,
   IconButton,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import getLastMove, {
@@ -52,6 +56,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     color: "transparent",
     highlighted: false,
   });
+
+  let navigate = useNavigate();
 
   useEffect(() => {
     if (dbGame != null) {
@@ -183,7 +189,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     return false;
   }
 
-  if (!dbGame || !localGameState) return <div> waiting ... </div>;
+  if (!dbGame || !localGameState) return <> waiting... </>;
 
   return (
     <>
@@ -227,6 +233,10 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
                   icon={<BiHome />}
                   size="sm"
                   ml="auto"
+                  onClick={() => {
+                    remove(dbGameReference);
+                    navigate("/");
+                  }}
                 />
               </Alert>
             )}
@@ -283,7 +293,27 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             </>
           )}
 
-          {dbGame.isGameOver && <Alert> Game is Over!</Alert>}
+          {dbGame.isGameOver && (
+            <Flex
+              direction="column"
+              background="gray.100"
+              p={12}
+              rounded="base"
+            >
+              <Heading mb={12}> Stratego</Heading>
+              <Button
+                colorScheme="gray"
+                mb={6}
+                onClick={() => {
+                  remove(dbGameReference);
+                  navigate("/");
+                }}
+              >
+                Go back home
+              </Button>
+              <Button colorScheme="whatsapp">Rematch?</Button>
+            </Flex>
+          )}
         </VStack>
       </Center>
     </>

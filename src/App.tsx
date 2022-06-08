@@ -8,7 +8,7 @@ import Game from "./Game";
 import Home from "./Home";
 
 const App: React.FC = () => {
-  const [user, loading, error] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   useEffect(() => {
     signInAnonymously(auth).catch((error) => {
       console.log(error);

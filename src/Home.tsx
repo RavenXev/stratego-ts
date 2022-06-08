@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
-import { set, ref, push } from "firebase/database";
+import { set, ref, push, get, child, remove } from "firebase/database";
 import { Flex, Button, Heading } from "@chakra-ui/react";
 import createDummyGame from "../helper-functions/createDummyGame";
 
@@ -17,6 +17,12 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
   const dummyGame = createDummyGame();
 
   const createGame = () => {
+    get(userRef).then((snapshot) => {
+      if (snapshot.val().currentGame != "") {
+        remove(ref(database, `/games/${snapshot.val()["currentGame"]}`));
+      }
+    });
+
     set(userRef, {
       currentGame: newGameRef.key,
     });
