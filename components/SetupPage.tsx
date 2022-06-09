@@ -20,15 +20,13 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  Badge,
   Button,
   Center,
   Flex,
   Grid,
   GridItem,
-  IconButton,
   Spinner,
-  Wrap,
+  Text,
 } from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
@@ -173,6 +171,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
           <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
             Waiting for opponent to join...
           </AlertTitle>
+          <Text> Click and drag to swap pieces and arrange your army.</Text>
         </>
       );
     } else if (
@@ -193,6 +192,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
           <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
             Your opponent is setting up their pieces!
           </AlertTitle>
+          <Text> Click and drag to swap pieces and arrange your army.</Text>
         </>
       );
     } else if (
@@ -211,6 +211,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
           <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
             Your opponent is ready!
           </AlertTitle>
+          <Text> Click and drag to swap pieces and arrange your army.</Text>
         </>
       );
     }
@@ -274,6 +275,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
           </Flex>
         </Alert>
       )}
+
       <DndContext
         onDragEnd={handleDragEnd}
         sensors={sensors}

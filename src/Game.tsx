@@ -6,27 +6,35 @@ import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
 import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect, update, remove, get } from "firebase/database";
+import { ref, set, onDisconnect, remove } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Box,
   Button,
   Center,
   Flex,
   Grid,
   Heading,
-  IconButton,
+  useColorModeValue,
   Text,
   VStack,
+  IconButton,
+  useColorMode,
+  HStack,
 } from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
 } from "../helper-functions/getLastMove";
 import SetupPage from "../components/SetupPage";
-import { BiHome } from "react-icons/bi";
+import { BiHome, BiMoon } from "react-icons/bi";
 import createDummyGame from "../helper-functions/createDummyGame";
+import { Rules } from "../components/Rules";
+import { MdContentCopy } from "react-icons/md";
+import { ImSun } from "react-icons/im";
+
 export interface dbGameProps {
   red: string;
   blue: string;
@@ -61,7 +69,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     highlighted: false,
   });
   const onDisconnectRef = onDisconnect(dbGameReference);
-
+  const boxBackground = useColorModeValue("gray.100", "gray.700");
+  const { colorMode, toggleColorMode } = useColorMode();
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -250,11 +259,15 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     return false;
   }
 
-  if (!localGameState) return <> waiting... </>;
-  else if (!dbGame || !gameId)
+  if (!dbGame || !gameId || !localGameState)
     return (
       <Center w="100vw" h="100vh">
-        <Flex direction="column" background="gray.100" p={12} rounded="base">
+        <Flex
+          direction="column"
+          background={boxBackground}
+          p={12}
+          rounded="base"
+        >
           <Text mb={6}> This game no longer exists! </Text>
           <Button
             colorScheme="red"
@@ -273,7 +286,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     <>
       <Center w="100vw" h="100vh">
         <VStack
-          w={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
+          w={["100vw", "90vw", "70vw", "70vw", "50vw", "40vw"]}
           maxH="90vh"
         >
           {!dbGame.isGameStarted &&
@@ -303,20 +316,50 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             ((dbGame.red == userId && dbGame.blue == "") ||
               (dbGame.blue == userId && dbGame.red == "")) && (
               <Alert status="error">
-                <AlertIcon />
-                <AlertTitle>Opponent disconnected! </AlertTitle>
-                Send them this game code or go back to home
-                <IconButton
-                  aria-label="Home button"
-                  colorScheme="red"
-                  icon={<BiHome />}
-                  size="sm"
-                  ml="auto"
-                  onClick={() => {
-                    remove(dbGameReference);
-                    navigate("/");
-                  }}
-                />
+                <Flex
+                  alignItems="center"
+                  justifyContent="center"
+                  flexWrap="wrap"
+                  padding={2}
+                >
+                  <AlertIcon />
+                  <AlertTitle p={3}>Opponent disconnected! </AlertTitle>
+                  <Box>
+                    <Button
+                      size="sm"
+                      mt={2}
+                      mb={2}
+                      variant="outline"
+                      colorScheme="red"
+                      aria-label="copy game code"
+                      rightIcon={<MdContentCopy />}
+                      ml={3}
+                      mr={3}
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${gameId}`);
+                      }}
+                    >
+                      Copy code again
+                    </Button>
+
+                    <Button
+                      aria-label="Home button"
+                      mt={2}
+                      mb={2}
+                      ml={3}
+                      mr={3}
+                      colorScheme="red"
+                      leftIcon={<BiHome />}
+                      size="sm"
+                      onClick={() => {
+                        remove(dbGameReference);
+                        navigate("/");
+                      }}
+                    >
+                      Go back to home
+                    </Button>
+                  </Box>
+                </Flex>
               </Alert>
             )}
 
@@ -375,7 +418,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
           {dbGame.isGameOver && dbGame.winner && (
             <Flex
               direction="column"
-              background="gray.100"
+              background={boxBackground}
               p={16}
               rounded="base"
               textAlign="center"
@@ -432,6 +475,22 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               )}
             </Flex>
           )}
+          <HStack>
+            <Rules />
+            <IconButton
+              as="button"
+              display="inline-flex"
+              alignItems="center"
+              justifyContent="center"
+              alignSelf="center"
+              w={3}
+              mb={{ base: 2, sm: 0 }}
+              size="lg"
+              aria-label="toggle dark mode"
+              onClick={toggleColorMode}
+              icon={colorMode === "dark" ? <ImSun /> : <BiMoon />}
+            />
+          </HStack>
         </VStack>
       </Center>
     </>

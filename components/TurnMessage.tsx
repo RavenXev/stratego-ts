@@ -1,4 +1,4 @@
-import { Alert } from "@chakra-ui/react";
+import { Alert, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import makeAttackReport from "../helper-functions/makeAttackReport";
 import { dbGameProps } from "../src/Game";
@@ -15,7 +15,7 @@ const TurnMessage: React.FC<MessageProp> = ({ dbGame, userId }) => {
         <Alert
           status={dbGame[dbGame.whoseTurn] == userId ? "success" : "warning"}
           variant="subtle"
-          color="gray.800"
+          colorScheme="gray"
           fontSize="lg"
           maxW="100%"
         >
@@ -25,7 +25,7 @@ const TurnMessage: React.FC<MessageProp> = ({ dbGame, userId }) => {
         </Alert>
       )}
       {dbGame.wasLastMoveAttack && (
-        <Alert bg={"gray.300"} color="gray.800" maxW="100%">
+        <Alert colorScheme="gray" maxW="100%">
           {makeAttackReport(dbGame, userId)}
         </Alert>
       )}

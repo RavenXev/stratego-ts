@@ -1,5 +1,5 @@
 import Piece from "../helper-functions/Piece";
-import { Center, GridItem } from "@chakra-ui/react";
+import { Center, GridItem, useColorModeValue } from "@chakra-ui/react";
 import {
   BiBomb,
   BiWater,
@@ -24,12 +24,6 @@ interface SquareProps {
   isBlue: boolean;
 }
 
-const SquareTemplateProps = {
-  border: "1px",
-  borderColor: "gray.300",
-  w: "100%",
-};
-
 const Square: React.FC<SquareProps> = ({
   piece,
   isPieceDisplayed,
@@ -41,8 +35,15 @@ const Square: React.FC<SquareProps> = ({
   handleClick,
   isBlue,
 }) => {
+  const squareBorder = useColorModeValue("gray.300", "gray.700");
   let { rank, position, color, highlighted } = piece;
   const lastMoveColor = whoseTurn == "red" ? "blue" : "red";
+
+  const SquareTemplateProps = {
+    border: "1px",
+    borderColor: squareBorder,
+    w: "100%",
+  };
 
   if (rank == -1) {
     // lakes in the middle
