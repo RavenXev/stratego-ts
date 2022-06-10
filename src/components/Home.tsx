@@ -20,8 +20,8 @@ import { BiMoon } from "react-icons/bi";
 interface userIdProp {
   userId: string;
 }
-import screenshot1 from "../src/screenshot1.png";
-import screenshot2 from "../src/screenshot2.png";
+import screenshot1 from "../screenshot1.png";
+import screenshot2 from "../screenshot2.png";
 
 const Home: React.FC<userIdProp> = ({ userId }) => {
   const { colorMode, toggleColorMode } = useColorMode();
