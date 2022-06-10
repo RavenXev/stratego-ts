@@ -4,8 +4,8 @@ import { signInAnonymously } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, set, onDisconnect } from "firebase/database";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Game from "./Game";
-import Home from "./Home";
+import Game from "../components/Game";
+import Home from "../components/Home";
 
 const App: React.FC = () => {
   const [user] = useAuthState(auth);
