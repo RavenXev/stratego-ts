@@ -163,12 +163,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGame.blue !== "" &&
         !dbGame.isGameOver
       ) {
-        get(ref(database, `games/${gameId}`)).then((snapshot) => {
-          onDisconnectRef.cancel();
-          if (snapshot.exists()) {
-            onDisconnectRef.update(currentPlayerUpdateObject);
-          }
-        });
+        onDisconnectRef.cancel();
+        onDisconnectRef.update(currentPlayerUpdateObject);
       }
 
       setLocalGameState(dbGame.gameState);

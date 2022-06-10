@@ -39,6 +39,16 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
   ) => {
     event.preventDefault();
 
+    get(userRef).then((snapshot) => {
+      if (snapshot.val().currentGame != "") {
+        set(ref(database, `/games/${snapshot.val()["currentGame"]}`), {
+          red: "",
+          blue: "",
+        });
+
+        remove(ref(database, `/games/${snapshot.val()["currentGame"]}`));
+      }
+    });
     if (gameCode.length == 0) {
       setNotFoundError(true);
       toast({
