@@ -1,5 +1,10 @@
 import Piece from "../helper-functions/Piece";
-import { Center, GridItem, useColorModeValue } from "@chakra-ui/react";
+import {
+  Center,
+  GridItem,
+  useColorModeValue,
+  useColorMode,
+} from "@chakra-ui/react";
 import {
   BiBomb,
   BiWater,
@@ -35,9 +40,27 @@ const Square: React.FC<SquareProps> = ({
   handleClick,
   isBlue,
 }) => {
+  const lakeBackground = useColorModeValue("gray.400", "gray.500");
   const squareBorder = useColorModeValue("gray.300", "gray.700");
+  const modeBlue = useColorModeValue("blue.500", "blue.700");
+  const modeRed = useColorModeValue("red.600", "red.700");
+  const modeYellow = useColorModeValue("yellow.300", "yellow.400");
+  const { colorMode } = useColorMode();
   let { rank, position, color, highlighted } = piece;
   const lastMoveColor = whoseTurn == "red" ? "blue" : "red";
+
+  function renderedColor(color: "transparent" | "blue" | "red" | "yellow") {
+    switch (color) {
+      case "transparent":
+        return "transparent";
+      case "yellow":
+        return;
+      case "blue":
+        return modeBlue;
+      case "red":
+        return modeRed;
+    }
+  }
 
   const SquareTemplateProps = {
     border: "1px",
@@ -45,10 +68,10 @@ const Square: React.FC<SquareProps> = ({
     w: "100%",
   };
 
+  // lakes in the middle
   if (rank == -1) {
-    // lakes in the middle
     return (
-      <Center {...SquareTemplateProps} bg="#76E4F7" color="white">
+      <Center {...SquareTemplateProps} bg={lakeBackground} color="gray.100">
         <BiWater size="50%" />
       </Center>
     );
@@ -59,9 +82,7 @@ const Square: React.FC<SquareProps> = ({
     highlighted == false
   ) {
     // the arrow path of the last move
-
     let arrowDirection = lastMoves.direction;
-
     if (isBlue == true) {
       switch (arrowDirection) {
         case "up":
@@ -81,60 +102,49 @@ const Square: React.FC<SquareProps> = ({
     switch (arrowDirection) {
       case "up":
         return (
-          <Center
-            {...SquareTemplateProps}
-            bg={color}
-            color={`${lastMoveColor}.600`}
-          >
+          <Center {...SquareTemplateProps} color={renderedColor(lastMoveColor)}>
             <BiChevronUp size="90%" />
           </Center>
         );
       case "down":
         return (
-          <Center
-            {...SquareTemplateProps}
-            bg={color}
-            color={`${lastMoveColor}.600`}
-          >
+          <Center {...SquareTemplateProps} color={renderedColor(lastMoveColor)}>
             <BiChevronDown size="90%" />
           </Center>
         );
       case "right":
         return (
-          <Center
-            {...SquareTemplateProps}
-            bg={color}
-            color={`${lastMoveColor}.600`}
-          >
+          <Center {...SquareTemplateProps} color={renderedColor(lastMoveColor)}>
             <BiChevronRight size="90%" />
           </Center>
         );
       case "left":
         return (
-          <Center
-            {...SquareTemplateProps}
-            bg={color}
-            color={`${lastMoveColor}.600`}
-          >
+          <Center {...SquareTemplateProps} color={renderedColor(lastMoveColor)}>
             <BiChevronLeft size="90%" />
           </Center>
         );
     }
   }
 
+  // last piece that moved (x with box)
   if (
     position == lastActivePiece?.position &&
     highlighted == false &&
     (isPieceDisplayed == false || color == "transparent") &&
     wasLastMoveAttack == true
   ) {
-    // last piece that moved
-
     return (
       <Center
         {...SquareTemplateProps}
-        bg={`${color}.500`}
-        color={color == "transparent" ? "gray.600" : "white"}
+        bg={renderedColor(color)}
+        color={
+          colorMode == "light"
+            ? color == "transparent"
+              ? "gray.600"
+              : "gray.100"
+            : "gray.100"
+        }
       >
         <FiXSquare size="60%" />
       </Center>
@@ -142,8 +152,8 @@ const Square: React.FC<SquareProps> = ({
   }
 
   if (!isPieceDisplayed) {
+    // highlighted enemy piece
     if (highlighted == true && (color == "red" || color == "blue")) {
-      // highlighted enemy piece
       return (
         <Center
           {...SquareTemplateProps}
@@ -155,39 +165,52 @@ const Square: React.FC<SquareProps> = ({
           <BiX size="80%" />
         </Center>
       );
-    } else {
+    }
+
+    // enemy piece
+    else {
       return (
-        // enemy piece
-        <Center
-          {...SquareTemplateProps}
-          onClick={handleClick}
-          bg={`${color}.500`}
-        >
+        <Center {...SquareTemplateProps} bg={renderedColor(color)}>
           <GridItem></GridItem>
         </Center>
       );
     }
-  } else if (isPieceDisplayed && rank === 99) {
-    // your bombs
+  }
+
+  // your bombs
+  else if (isPieceDisplayed && rank === 99) {
     return (
-      <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
+      <Center
+        {...SquareTemplateProps}
+        bg={renderedColor(color)}
+        color="gray.100"
+      >
         <BiBomb size="50%" />
       </Center>
     );
-  } else if (isPieceDisplayed && rank == 0) {
-    // your flag
+  }
+
+  // your flag
+  else if (isPieceDisplayed && rank == 0) {
     return (
-      <Center {...SquareTemplateProps} bg={`${color}.500`} color="white">
+      <Center
+        {...SquareTemplateProps}
+        bg={renderedColor(color)}
+        color="gray.100"
+      >
         <BiFlag size="50%" />
       </Center>
     );
+
+    //blank square
   } else if (isPieceDisplayed && highlighted == false && rank == null) {
     return (
-      <Center {...SquareTemplateProps} bg={"transparent"}>
-        <GridItem fontSize="lg" fontWeight="bold"></GridItem>
+      <Center {...SquareTemplateProps}>
+        <GridItem></GridItem>
       </Center>
     );
   }
+
   //your movable pieces and yellow highlights
   return (
     <Center
@@ -196,12 +219,14 @@ const Square: React.FC<SquareProps> = ({
       onClick={handleClick}
       bg={
         activeSquare?.position == position
-          ? `${color}.700`
+          ? colorMode == "light"
+            ? `${color}.700`
+            : `${color}.600`
           : highlighted == true
-          ? "#F6E05E" // yellow highlight
-          : `${color}.500`
+          ? modeYellow // yellow highlight
+          : renderedColor(color)
       }
-      color="white"
+      color="gray.100"
     >
       <GridItem fontSize="lg" fontWeight="bold">
         {rank}

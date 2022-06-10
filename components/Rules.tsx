@@ -22,7 +22,7 @@ export const Rules = () => {
 
   return (
     <>
-      <Button onClick={onOpen} variant="ghost" colorScheme="gray" size="lg">
+      <Button onClick={onOpen} colorScheme="gray" size={"lg"}>
         Rules
       </Button>
 

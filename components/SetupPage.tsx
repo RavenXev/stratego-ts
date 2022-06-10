@@ -27,6 +27,7 @@ import {
   GridItem,
   Spinner,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
@@ -47,6 +48,21 @@ interface SetupPageProps {
 
 const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
   const { rank, color } = gameState[id - 1];
+  const squareBorder = useColorModeValue("gray.300", "gray.700");
+  const modeBlue = useColorModeValue("blue.500", "blue.700");
+  const modeRed = useColorModeValue("red.600", "red.700");
+  function renderedColor(color: "transparent" | "blue" | "red" | "yellow") {
+    switch (color) {
+      case "transparent":
+        return "transparent";
+      case "yellow":
+        return;
+      case "blue":
+        return modeBlue;
+      case "red":
+        return modeRed;
+    }
+  }
 
   const {
     attributes,
@@ -64,7 +80,7 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
 
   const SquareTemplateProps = {
     border: "1px",
-    borderColor: "gray.300",
+    borderColor: squareBorder,
     w: "100%",
   };
 
@@ -72,7 +88,7 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
     return (
       <Center
         {...SquareTemplateProps}
-        bg={isDragging ? "blackAlpha.700" : `${color}.500`}
+        bg={isDragging ? "blackAlpha.700" : renderedColor(color)}
         sx={{ touchAction: "none" }}
         ref={setNodeRef}
         style={style}
@@ -87,7 +103,7 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
     return (
       <Center
         {...SquareTemplateProps}
-        bg={isDragging ? "blackAlpha.700" : `${color}.500`}
+        bg={isDragging ? "blackAlpha.700" : renderedColor(color)}
         sx={{ touchAction: "none" }}
         ref={setNodeRef}
         style={style}
@@ -103,7 +119,7 @@ const SortableSquare: React.FC<SortableSquareProps> = ({ id, gameState }) => {
   return (
     <Center
       {...SquareTemplateProps}
-      bg={isDragging ? "blackAlpha.700" : `${color}.500`}
+      bg={isDragging ? "blackAlpha.700" : renderedColor(color)}
       sx={{ touchAction: "none" }}
       ref={setNodeRef}
       style={style}
@@ -168,7 +184,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
       return (
         <>
           <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
-          <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
+          <AlertTitle fontSize="lg" mb={2}>
             Waiting for opponent to join...
           </AlertTitle>
           <Text> Click and drag to swap pieces and arrange your army.</Text>
@@ -189,7 +205,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
             mb={6}
           />
 
-          <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
+          <AlertTitle fontSize="lg" mb={2}>
             Your opponent is setting up their pieces!
           </AlertTitle>
           <Text> Click and drag to swap pieces and arrange your army.</Text>
@@ -208,7 +224,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
             <Spinner thickness="4px" size="lg" speed="1s" mt={3} mb={6} />
           )}
 
-          <AlertTitle fontSize="lg" textColor={"gray.700"} mb={2}>
+          <AlertTitle fontSize="lg" mb={2}>
             Your opponent is ready!
           </AlertTitle>
           <Text> Click and drag to swap pieces and arrange your army.</Text>
@@ -290,19 +306,12 @@ const SetupPage: React.FC<SetupPageProps> = ({
           >
             <GridItem rowSpan={2} colSpan={10}>
               <Alert
-                variant="subtle"
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="center"
                 textAlign="center"
                 height="100%"
                 status="success"
-                bg={
-                  (dbGame.isRedReady == true && dbGame.blue == userId) ||
-                  (dbGame.isBlueReady == true && dbGame.red == userId)
-                    ? "green.200"
-                    : "gray.300"
-                }
               >
                 <WaitMessageComponent />
               </Alert>

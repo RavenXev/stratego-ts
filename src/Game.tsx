@@ -24,6 +24,7 @@ import {
   IconButton,
   useColorMode,
   HStack,
+  Stack,
 } from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
@@ -286,7 +287,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     <>
       <Center w="100vw" h="100vh">
         <VStack
-          w={["100vw", "90vw", "70vw", "70vw", "50vw", "40vw"]}
+          w={["100vw", "90vw", "70vw", "60vw", "50vw", "40vw"]}
           maxH="90vh"
         >
           {!dbGame.isGameStarted &&
@@ -315,52 +316,56 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             !dbGame.isGameOver &&
             ((dbGame.red == userId && dbGame.blue == "") ||
               (dbGame.blue == userId && dbGame.red == "")) && (
-              <Alert status="error">
-                <Flex
+              <Stack
+                direction={{ base: "column", sm: "row" }}
+                spacing={2}
+                justifyContent={{ sm: "left", md: "center" }}
+              >
+                <Text
+                  display="inline-flex"
                   alignItems="center"
                   justifyContent="center"
-                  flexWrap="wrap"
-                  padding={2}
+                  w={{ base: "full", sm: "auto" }}
+                  mb={{ base: 2, sm: 0 }}
                 >
-                  <AlertIcon />
-                  <AlertTitle p={3}>Opponent disconnected! </AlertTitle>
-                  <Box>
-                    <Button
-                      size="sm"
-                      mt={2}
-                      mb={2}
-                      variant="outline"
-                      colorScheme="red"
-                      aria-label="copy game code"
-                      rightIcon={<MdContentCopy />}
-                      ml={3}
-                      mr={3}
-                      onClick={() => {
-                        navigator.clipboard.writeText(`${gameId}`);
-                      }}
-                    >
-                      Copy code again
-                    </Button>
+                  <strong>Opponent disconnected! </strong>
+                </Text>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="red"
+                  aria-label="copy game code"
+                  display="inline-flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  w={{ base: "full", sm: "auto" }}
+                  mb={{ base: 2, sm: 0 }}
+                  rightIcon={<MdContentCopy />}
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${gameId}`);
+                  }}
+                >
+                  Copy code again
+                </Button>
 
-                    <Button
-                      aria-label="Home button"
-                      mt={2}
-                      mb={2}
-                      ml={3}
-                      mr={3}
-                      colorScheme="red"
-                      leftIcon={<BiHome />}
-                      size="sm"
-                      onClick={() => {
-                        remove(dbGameReference);
-                        navigate("/");
-                      }}
-                    >
-                      Go back to home
-                    </Button>
-                  </Box>
-                </Flex>
-              </Alert>
+                <Button
+                  display="inline-flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  w={{ base: "full", sm: "auto" }}
+                  mb={{ base: 2, sm: 0 }}
+                  aria-label="Home button"
+                  colorScheme="red"
+                  leftIcon={<BiHome />}
+                  size="sm"
+                  onClick={() => {
+                    remove(dbGameReference);
+                    navigate("/");
+                  }}
+                >
+                  Go back to home
+                </Button>
+              </Stack>
             )}
 
           {dbGame.isGameStarted && !dbGame.isGameOver && (
@@ -470,7 +475,8 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
               {((dbGame.red == userId && dbGame.rematchBlue) ||
                 (dbGame.blue == userId && dbGame.rematchRed)) && (
                 <Alert status="success">
-                  You've been challenged to a rematch!
+                  You've been challenged <br />
+                  to a rematch!
                 </Alert>
               )}
             </Flex>
