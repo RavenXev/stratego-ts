@@ -13,7 +13,6 @@
     "@dnd-kit/sortable": "^7.0.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "@fontsource/fascinate-inline": "^4.5.8",
     "firebase": "^9.8.1",
     "framer-motion": "^6.3.3",
     "react": "^18.0.0",

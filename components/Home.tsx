@@ -14,7 +14,6 @@ import {
 import { ImSun } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
-import "@fontsource/fascinate-inline";
 import { set, ref, push, get, remove } from "firebase/database";
 import createDummyGame from "../helper-functions/createDummyGame";
 import { BiMoon } from "react-icons/bi";
@@ -254,8 +253,8 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
           shadow="2xl"
           src={
             colorMode == "light"
-              ? "../components/screenshot.png"
-              : "../components/screenshot2.png"
+              ? "../src/screenshot.png"
+              : "../src/screenshot2.png"
           }
           alt="Hellonext feedback boards software screenshot"
         />

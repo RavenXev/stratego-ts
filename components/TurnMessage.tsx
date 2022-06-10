@@ -1,7 +1,7 @@
 import { Alert, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 import makeAttackReport from "../helper-functions/makeAttackReport";
-import { dbGameProps } from "../src/Game";
+import { dbGameProps } from "../components/Game";
 
 interface MessageProp {
   dbGame: dbGameProps;

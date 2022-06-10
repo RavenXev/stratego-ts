@@ -32,7 +32,7 @@ import {
 import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
 import { MdContentCopy } from "react-icons/md";
-import { dbGameProps } from "../src/Game";
+import { dbGameProps } from "../components/Game";
 
 interface SortableSquareProps {
   id: number;

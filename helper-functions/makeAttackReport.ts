@@ -1,5 +1,5 @@
 import { Val } from "react-firebase-hooks/database/dist/database/types";
-import { dbGameProps } from "../src/Game";
+import { dbGameProps } from "../components/Game";
 
 export default function makeAttackReport(
   dbGame: dbGameProps,
