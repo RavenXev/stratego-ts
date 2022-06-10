@@ -20,6 +20,9 @@ import { BiMoon } from "react-icons/bi";
 interface userIdProp {
   userId: string;
 }
+import screenshot1 from "../src/screenshot1.png";
+import screenshot2 from "../src/screenshot2.png";
+
 const Home: React.FC<userIdProp> = ({ userId }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -251,11 +254,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
           w="full"
           rounded="lg"
           shadow="2xl"
-          src={
-            colorMode == "light"
-              ? "../src/screenshot.png"
-              : "../src/screenshot2.png"
-          }
+          src={colorMode == "light" ? screenshot1 : screenshot2}
           alt="Hellonext feedback boards software screenshot"
         />
       </Box>
