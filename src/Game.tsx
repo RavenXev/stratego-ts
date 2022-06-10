@@ -6,13 +6,10 @@ import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
 import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect, remove } from "firebase/database";
+import { ref, set, onDisconnect, remove, get } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import {
   Alert,
-  AlertIcon,
-  AlertTitle,
-  Box,
   Button,
   Center,
   Flex,
@@ -166,8 +163,12 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
         dbGame.blue !== "" &&
         !dbGame.isGameOver
       ) {
-        onDisconnectRef.cancel();
-        onDisconnectRef.update(currentPlayerUpdateObject);
+        get(ref(database, `games/${gameId}`)).then((snapshot) => {
+          onDisconnectRef.cancel();
+          if (snapshot.exists()) {
+            onDisconnectRef.update(currentPlayerUpdateObject);
+          }
+        });
       }
 
       setLocalGameState(dbGame.gameState);

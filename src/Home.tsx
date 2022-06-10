@@ -33,10 +33,23 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
   const [gameCode, setGameCode] = useState("");
   const [notFoundError, setNotFoundError] = useState(false);
   const toast = useToast();
+
   const handleSubmit: React.FormEventHandler = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+
+    if (gameCode.length == 0) {
+      setNotFoundError(true);
+      toast({
+        title: "Empty Game",
+        description: "Paste a code into the box!",
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
+
     get(ref(database, `/games/${gameCode}`)).then((snapshot) => {
       if (snapshot.exists()) {
         navigate(`/games/${gameCode}`);
