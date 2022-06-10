@@ -4,7 +4,7 @@
  * @param {number} position location on the board.
  * @param {Array} board array of pieces on board
  */
-import Piece from "../helper-functions/Piece";
+import Piece from "./Piece";
 
 function getAvailableMoves(
   rank: Piece["rank"],

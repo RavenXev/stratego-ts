@@ -1,4 +1,4 @@
-import Piece from "../helper-functions/Piece";
+import Piece from "./Piece";
 
 function createDummyGame() {
   let dummyGame: Piece[] = [];

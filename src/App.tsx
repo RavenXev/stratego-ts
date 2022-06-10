@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { auth, database } from "../backend/config";
+import { auth, database } from "./backend/config";
 import { signInAnonymously } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, set, onDisconnect } from "firebase/database";
