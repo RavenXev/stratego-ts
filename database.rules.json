@@ -3,7 +3,7 @@
     "games": {
       "$game": {
         ".read": "auth != null",
-        ".write": "auth != null && (!data.exists() || root.child('users').child(auth.uid).child('currentGame').val() == $game)"
+        ".write": "auth != null && (!newData.exists() || root.child('users').child(auth.uid).child('currentGame').val() == $game)"
       }
     },
     "users": {

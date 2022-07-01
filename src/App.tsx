@@ -3,9 +3,14 @@ import { auth, database } from "./backend/config";
 import { signInAnonymously } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, set, onDisconnect } from "firebase/database";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Game from "../src/components/Game";
-import Home from "../src/components/Home";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Game from "./components/Game";
+import Home from "./components/Home";
 
 const App: React.FC = () => {
   const [user] = useAuthState(auth);
@@ -29,6 +34,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home userId={user.uid} />} />
           <Route path="/games/:id" element={<Game userId={user.uid} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </>

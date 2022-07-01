@@ -6,7 +6,7 @@ import TurnMessage from "../components/TurnMessage";
 import captureSquare from "../helper-functions/captureSquare";
 import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../backend/config";
-import { ref, set, onDisconnect, remove, get } from "firebase/database";
+import { ref, set, onDisconnect, remove } from "firebase/database";
 import { useObjectVal } from "react-firebase-hooks/database";
 import {
   Alert,
@@ -22,15 +22,16 @@ import {
   useColorMode,
   HStack,
   Stack,
+  Container,
 } from "@chakra-ui/react";
 import getLastMove, {
   ReturnLastMovesProps,
 } from "../helper-functions/getLastMove";
 import SetupPage from "../components/SetupPage";
-import { BiHome, BiMoon } from "react-icons/bi";
-import createDummyGame from "../helper-functions/createDummyGame";
 import { Rules } from "../components/Rules";
+import createDummyGame from "../helper-functions/createDummyGame";
 import { MdContentCopy } from "react-icons/md";
+import { BiHome, BiMoon } from "react-icons/bi";
 import { ImSun } from "react-icons/im";
 
 export interface dbGameProps {
@@ -282,11 +283,14 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
     );
   return (
     <>
-      <Center w="100vw" h="100vh">
-        <VStack
-          w={["100vw", "90vw", "70vw", "60vw", "50vw", "40vw"]}
-          maxH="90vh"
-        >
+      <Container
+        centerContent
+        mt={6}
+        justifyContent="center"
+        alignItems="center"
+        maxW={["100vw", "95vw", "70vw", "60vw", "50vw", "40vw"]}
+      >
+        <VStack pt={8}>
           {!dbGame.isGameStarted &&
             (dbGame.isBlueReady == false || dbGame.isRedReady == false) && (
               <SetupPage
@@ -369,7 +373,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             <>
               <TurnMessage dbGame={dbGame} userId={userId} />
               <Grid
-                h={["100vw", "90vw", "80vw", "75vw", "50vw", "40vw"]}
+                h={["100vw", "95vw", "70vw", "60vw", "50vw", "40vw"]}
                 maxW="100vw"
                 templateColumns="repeat(10,1fr)"
                 templateRows="repeat(10,1fr)"
@@ -495,7 +499,7 @@ const Game: React.FC<userIdProp> = ({ userId }) => {
             />
           </HStack>
         </VStack>
-      </Center>
+      </Container>
     </>
   );
 };

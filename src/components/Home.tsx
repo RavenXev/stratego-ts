@@ -10,13 +10,16 @@ import {
   IconButton,
   Input,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
-import { ImSun } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import { database } from "../backend/config";
-import { set, ref, push, get, remove } from "firebase/database";
+import { set, ref, get, remove, update } from "firebase/database";
 import createDummyGame from "../helper-functions/createDummyGame";
+import { ImSun } from "react-icons/im";
 import { BiMoon } from "react-icons/bi";
+import generateWord from "../helper-functions/generateWord";
+
 interface userIdProp {
   userId: string;
 }
@@ -28,8 +31,9 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
 
   const navigate = useNavigate();
   const userRef = ref(database, `/users/${userId}`);
-  const allGamesRef = ref(database, "games");
-  const newGameRef = push(allGamesRef);
+
+  const newGameWord = generateWord();
+
   const dummyGame = createDummyGame();
 
   const [gameCode, setGameCode] = useState("");
@@ -85,10 +89,9 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
     });
 
     set(userRef, {
-      currentGame: newGameRef.key,
+      currentGame: newGameWord,
     });
-
-    set(newGameRef, {
+    update(ref(database, `/games/${newGameWord}`), {
       whoseTurn: "red",
       gameState: dummyGame,
       red: userId,
@@ -179,7 +182,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
             cursor="pointer"
             onClick={() => {
               createGame();
-              navigate(`/games/${newGameRef.key}`);
+              navigate(`/games/${newGameWord}`);
             }}
           >
             Play now!
@@ -196,6 +199,8 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
           >
             <Input
               isInvalid={notFoundError ? true : undefined}
+              textTransform="uppercase"
+              type="text"
               fontSize="sm"
               colorScheme="gray"
               display="inline-flex"
@@ -211,7 +216,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
                 if (notFoundError) {
                   setNotFoundError(false);
                 }
-                setGameCode(event.target.value.trim());
+                setGameCode(event.target.value.trim().toUpperCase());
               }}
             />
             <Button
@@ -255,7 +260,7 @@ const Home: React.FC<userIdProp> = ({ userId }) => {
           rounded="lg"
           shadow="2xl"
           src={colorMode == "light" ? screenshot1 : screenshot2}
-          alt="Hellonext feedback boards software screenshot"
+          alt="screenshot of game"
         />
       </Box>
     </Box>

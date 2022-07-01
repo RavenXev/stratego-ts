@@ -33,6 +33,7 @@ import Piece from "../helper-functions/Piece";
 import { BiBomb, BiFlag } from "react-icons/bi";
 import { MdContentCopy } from "react-icons/md";
 import { dbGameProps } from "../components/Game";
+import { useNavigate } from "react-router-dom";
 
 interface SortableSquareProps {
   id: number;
@@ -177,6 +178,7 @@ const SetupPage: React.FC<SetupPageProps> = ({
   }
 
   const WaitMessageComponent = () => {
+    let navigate = useNavigate();
     if (
       (dbGame.red == userId && dbGame.blue == "") ||
       (dbGame.blue == userId && dbGame.red == "")
@@ -232,7 +234,21 @@ const SetupPage: React.FC<SetupPageProps> = ({
       );
     }
 
-    return <AlertTitle>An error has occurred</AlertTitle>;
+    return (
+      <>
+        <AlertTitle>An error has occurred</AlertTitle>{" "}
+        <Button
+          colorScheme="red"
+          mb={6}
+          onClick={() => {
+            navigate(`/`);
+          }}
+        >
+          Back to home
+        </Button>
+        ;
+      </>
+    );
   };
 
   const handleClickSaveState = () => {
@@ -270,9 +286,10 @@ const SetupPage: React.FC<SetupPageProps> = ({
             justifyContent="center"
             flexWrap="wrap"
             padding={2}
+            minH={6}
           >
             <AlertIcon mt={2} mb={2} />
-            Copy the code and send it to your friend!
+            Copy the game code here to send to your friend!
             <Button
               size="sm"
               mt={2}
